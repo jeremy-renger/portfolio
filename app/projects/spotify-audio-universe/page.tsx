@@ -14,6 +14,12 @@ export default function SpotifyAudioUniversePage() {
             Spotify Audio Universe maps a 25,000-track feature space into a browser-native visual system that makes
             similarity, genre clustering, and sonic contrast legible at a glance.
           </p>
+          <div className="actions">
+            <a href="#demo" className="btn btn-primary">Open Demo</a>
+            <a href="https://github.com/Jeremy-Renger/portfolio" className="btn" target="_blank" rel="noreferrer">
+              View Repo
+            </a>
+          </div>
           <div className="trust-bar">
             <div className="trust-item">
               <span className="trust-label">Role</span>
@@ -70,6 +76,14 @@ export default function SpotifyAudioUniversePage() {
               <li><strong>Focus:</strong> fast exploratory interaction, not just static charts</li>
             </ul>
           </article>
+        </section>
+
+        <section className="detail-panel reveal reveal-delay-2">
+          <h2 className="section-title" style={{ marginTop: 0 }}>Employer signal</h2>
+          <p className="hero-copy" style={{ maxWidth: 'none' }}>
+            This is the strongest example of how I like to work: start from a dense model, decide what a reviewer
+            needs to understand quickly, and design the interface so exploration feels immediate instead of academic.
+          </p>
         </section>
       </main>
     </div>

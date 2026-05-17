@@ -1,149 +1,45 @@
-# 📥 DOWNLOAD GUIDE - THE FREQUENCY ATLAS
+# Frequency Atlas Download Guide
 
-## WHAT YOU'RE DOWNLOADING
+## What this artifact set includes
 
-You have **3 downloadable files**:
+Frequency Atlas is presented as two supporting downloads:
 
----
+1. `frequency-atlas-research-paper.pdf`
+2. `frequency-atlas-download-guide.md`
 
-## 1️⃣ **frequency-atlas-complete.zip** (38 KB)
-**THIS IS THE MAIN FILE - DOWNLOAD THIS!**
+The interactive atlas remains the fastest way to understand the work. The paper is the deeper written artifact.
 
-Contains the entire visualizer application:
-- ✅ All source code (pages, components, data)
-- ✅ Configuration files (ready to deploy)
-- ✅ Documentation (README, deployment guide, START-HERE)
-- ✅ Complete research database (150+ studies)
+## Research paper
 
-**What to do:**
-1. Download this ZIP file
-2. Extract it on your computer
-3. Follow instructions in START-HERE.md
-4. Deploy to your Vercel site in 5 minutes!
+`frequency-atlas-research-paper.pdf` is the long-form companion document for this case study.
 
----
+It is useful if you want:
+- a more formal explanation of the problem framing
+- a written view of the intervention model behind the atlas
+- a portable artifact to review away from the live site
 
-## 2️⃣ **frequency-atlas-research-paper.pdf** (40 KB)
-**PUBLICATION-READY RESEARCH PAPER**
+Author attribution on the current export is:
+- `Jeremy Renger`
 
-Complete, professional research paper including:
-- ✅ Abstract & Introduction
-- ✅ Methods & Systematic Review
-- ✅ Neurophysiological Foundations
-- ✅ Findings from 156 studies (17,000+ participants)
-- ✅ Synthesis & Unified Framework
-- ✅ Clinical Applications
-- ✅ Future Directions
-- ✅ Complete references
+## Interactive atlas
 
-**What to do:**
-1. Download this PDF
-2. Upload to your website's research section
-3. Share with colleagues/journals
-4. Ready for submission!
+The live atlas is designed for fast review:
+- filter intervention classes
+- compare band-level responses
+- inspect evidence framing in one interface
 
----
+This is the best place to understand how the work translates research structure into product-like interaction.
 
-## 3️⃣ **frequency-atlas/** (folder)
-**DIRECT ACCESS TO SOURCE FILES**
+## What employers should take from it
 
-If you don't want to download the ZIP, you can:
-- Browse individual files
-- Copy specific components
-- View code directly
+Frequency Atlas is meant to show:
+- interface design for dense technical information
+- research synthesis translated into a usable product surface
+- frontend implementation that supports exploratory comparison rather than static presentation
 
-**But we recommend downloading the ZIP for convenience!**
+## Suggested review order
 
----
-
-## 🚀 QUICK START
-
-**Fastest path (3 steps):**
-
-1. **Download:** frequency-atlas-complete.zip
-2. **Extract:** Unzip on your computer
-3. **Read:** Open START-HERE.md and follow instructions
-
-**You'll be live in 5-10 minutes!**
-
----
-
-## 📄 WHAT'S IN THE ZIP FILE?
-
-```
-frequency-atlas/
-├── START-HERE.md           ← READ THIS FIRST!
-├── DEPLOYMENT-GUIDE.md     ← Step-by-step deployment
-├── README.md               ← Full documentation
-│
-├── pages/
-│   ├── frequency-atlas.tsx ← Main visualizer
-│   └── _app.tsx           ← App configuration
-│
-├── components/
-│   ├── BrainVisualization.tsx  ← 3D brain
-│   ├── ControlPanel.tsx        ← Controls
-│   └── EffectsDisplay.tsx      ← Charts
-│
-├── data/
-│   └── interventions.ts    ← All research data
-│
-├── styles/
-│   └── globals.css         ← Styling
-│
-└── Config files (package.json, tailwind, etc.)
-```
-
----
-
-## 📊 WHAT'S IN THE RESEARCH PAPER?
-
-**40 pages** of comprehensive research including:
-
-- Title page & Abstract
-- Introduction & Problem Statement
-- Methods & Literature Review
-- Neurophysiological Foundations
-- Systematic Review of 10+ Interventions:
-  - Meditation (28 studies)
-  - TMS/TBS (22 studies)
-  - Psychedelics (17 studies)
-  - Photobiomodulation (19 studies)
-  - And more...
-- Synthesis & Convergent Patterns
-- Unified Mechanistic Framework
-- Clinical Applications & Protocols
-- Future Directions
-- Complete References
-
----
-
-## 💰 TOTAL COST: $0
-
-Everything is FREE:
-- ✅ Source code
-- ✅ Research paper
-- ✅ All documentation
-- ✅ Deployment (Vercel free tier)
-
----
-
-## 🆘 NEED HELP?
-
-1. Read START-HERE.md (in the ZIP)
-2. Read DEPLOYMENT-GUIDE.md (troubleshooting section)
-3. Check README.md (comprehensive docs)
-
----
-
-## ✅ WHAT YOU GET
-
-- **Professional 3D brain visualizer**
-- **156 studies worth of research data**
-- **Publication-ready research paper**
-- **Complete source code**
-- **Ready to deploy in minutes**
-
----
-
-**DOWNLOAD NOW AND GET STARTED!** 🚀
+1. Open the live `Frequency Atlas` page
+2. Use the visualizer for a quick interaction pass
+3. Download the PDF if you want the longer written framing
+4. Return to the portfolio homepage for project comparison context

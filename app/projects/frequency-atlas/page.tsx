@@ -19,6 +19,27 @@ export default function FrequencyAtlasPage() {
             <a href="/research/frequency-atlas-research-paper.pdf" className="btn" download="frequency-atlas-research-paper.pdf">
               Download Paper
             </a>
+            <a href="/research/frequency-atlas-download-guide.md" className="btn" download="frequency-atlas-download-guide.md">
+              Download Guide
+            </a>
+          </div>
+          <div className="trust-bar">
+            <div className="trust-item">
+              <span className="trust-label">Research surface</span>
+              <span className="trust-value">150+ mapped intervention references</span>
+            </div>
+            <div className="trust-item">
+              <span className="trust-label">Core value</span>
+              <span className="trust-value">Comparative reasoning across frequency bands</span>
+            </div>
+            <div className="trust-item">
+              <span className="trust-label">Output</span>
+              <span className="trust-value">Interactive atlas plus downloadable paper</span>
+            </div>
+            <div className="trust-item">
+              <span className="trust-label">Why it matters</span>
+              <span className="trust-value">Technical communication through interface design</span>
+            </div>
           </div>
         </section>
 
@@ -62,9 +83,25 @@ export default function FrequencyAtlasPage() {
 
           <article className="detail-panel">
             <h2 className="section-title" style={{ marginTop: 0 }}>Artifacts</h2>
-            <div className="actions" style={{ marginTop: 0 }}>
+            <p className="hero-copy" style={{ maxWidth: 'none' }}>
+              This case study includes a concise download guide for quick context and a corrected PDF paper export for
+              deeper review. Both assets are aligned with the real-name portfolio.
+            </p>
+            <div className="artifact-stack">
+              <div className="artifact-card">
+                <span className="artifact-label">Paper</span>
+                <strong>Frequency Atlas Research Paper</strong>
+                <span className="artifact-note">Corrected author attribution for external sharing.</span>
+              </div>
+              <div className="artifact-card">
+                <span className="artifact-label">Guide</span>
+                <strong>Download and context notes</strong>
+                <span className="artifact-note">Short explanation of what the atlas and paper contain.</span>
+              </div>
+            </div>
+            <div className="actions" style={{ marginTop: '1rem' }}>
               <a href="/research/frequency-atlas-research-paper.pdf" className="btn btn-primary" download="frequency-atlas-research-paper.pdf">
-                Download PDF
+                Download Paper
               </a>
               <a href="/research/frequency-atlas-download-guide.md" className="btn" download="frequency-atlas-download-guide.md">
                 Download Guide
