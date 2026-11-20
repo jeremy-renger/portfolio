@@ -7,10 +7,21 @@ import summary from '../lib/spotify-summary.json';
 const songs = summary.count.toLocaleString('en-US');
 const overall = Math.round(summary.purity.overall * 100);
 
+// Structured data so search engines can tie the site, GitHub and LinkedIn to one person.
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  jobTitle: SITE.role,
+  url: SITE.url,
+  sameAs: [SITE.github, SITE.linkedin]
+};
+
 export default function HomePage() {
   return (
     <div className="page-theme page-theme-visualizer portfolio-shell">
       <PortfolioHeader />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
 
       <main className="main">
         <section className="hero reveal home-hero">

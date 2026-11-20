@@ -11,6 +11,6 @@
 
 ### Before push
 
-1. Confirm the remote should be `Jeremy-Renger/portfolio`
+1. Confirm the remote should be `jeremy-renger/portfolio`
 2. Confirm this app is strong enough to pin on GitHub and use on LinkedIn
 3. Confirm no non-portfolio branding is foregrounded
