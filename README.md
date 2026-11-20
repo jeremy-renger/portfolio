@@ -16,7 +16,12 @@ Interfaces that make dense technical data readable. Live: https://jeremyrenger.v
 - **Data:** [TidyTuesday 2020-01-21 Spotify songs](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-01-21), collected from the Spotify Web API. Not affiliated with Spotify.
 
 ### Frequency Atlas
-An information-design study: neuromodulation research ranges from replicated trials to single small studies, so the atlas grades every intervention by evidence strength, sorts by it, and shows sources inline. It is not medical advice.
+A research atlas of brainwave and neuromodulation studies, graded by evidence strength. Its first draft was written with an AI assistant, so before publishing I checked all 31 references and 56 findings against their sources: only 12 references and 4 findings held up as written. Every finding now links to a verified source, and the audit is shown on the page. It is not medical advice.
+
+## Writing
+
+- [How Songs Sound vs. What They're Called: Mapping 26,159 Spotify Tracks](https://jeremyrenger.vercel.app/papers/Renger_2026_Songs_vs_Genre.pdf) (November 2026)
+- [Auditing an AI-Drafted Research Atlas: 31 References, 56 Findings](https://jeremyrenger.vercel.app/papers/Renger_2026_Frequency_Atlas_Source_Audit.pdf) (November 2026)
 
 ## Run locally
 

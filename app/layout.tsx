@@ -21,16 +21,16 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: `${SITE.name} | Software engineer`,
+  title: `${SITE.name} | Software Engineer`,
   description,
   openGraph: {
     type: 'website',
     url: '/',
     siteName: SITE.name,
-    title: `${SITE.name} | Software engineer`,
+    title: `${SITE.name} | Software Engineer`,
     description
   },
-  twitter: { card: 'summary_large_image', title: `${SITE.name} | Software engineer`, description }
+  twitter: { card: 'summary_large_image', title: `${SITE.name} | Software Engineer`, description }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

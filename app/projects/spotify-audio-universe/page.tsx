@@ -13,7 +13,7 @@ const purity = Object.entries(summary.purity.by_genre)
 const overall = pct(summary.purity.overall);
 const chanceAll = pct(Object.values(summary.purity.by_genre).reduce((t, v) => t + v.chance * v.chance, 0));
 
-const ogTitle = 'Spotify Audio Universe: 26,159 songs mapped by how they sound';
+const ogTitle = 'Spotify Audio Universe: 26,159 Songs Mapped by How They Sound';
 const ogDescription = "Interactive UMAP/t-SNE map of 26,159 real Spotify songs. Only 38% of a song's nearest neighbors share its genre. Morph between projections, search and inspect neighbors.";
 
 export const metadata: Metadata = {
@@ -40,12 +40,12 @@ export default function SpotifyAudioUniversePage() {
             you search, hover, and inspect neighbors.
           </p>
           <div className="actions">
-            <a href="#demo" className="btn btn-primary">Explore the map</a>
+            <a href="#demo" className="btn btn-primary">Explore the Map</a>
             <a href="/papers/Renger_2026_Songs_vs_Genre.pdf" className="btn" target="_blank" rel="noreferrer">
               Read the paper (PDF)
             </a>
             <a
-              href="https://github.com/Jeremy-Renger/portfolio/blob/main/scripts/build_spotify_embedding.py"
+              href="https://github.com/jeremy-renger/portfolio/blob/main/scripts/build_spotify_embedding.py"
               className="btn"
               target="_blank"
               rel="noreferrer"
@@ -76,7 +76,7 @@ export default function SpotifyAudioUniversePage() {
         <SpotifyVisualizer />
 
         <section className="detail-panel reveal reveal-delay-1">
-          <h2 className="section-title" style={{ marginTop: 0 }}>What the map shows</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>What the Map Shows</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             Playlist genre is a weak label for how a song sounds. Across all songs, {overall}% of a song&apos;s ten
             nearest neighbors in feature space share its genre, against about {chanceAll}% by chance. EDM, rock and rap form real
@@ -106,7 +106,7 @@ export default function SpotifyAudioUniversePage() {
         </section>
 
         <section className="detail-panel reveal reveal-delay-1">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Which genres get confused</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>Which Genres Get Confused</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             A random forest that hears only the nine audio features gets {Math.round(summary.confusion.accuracy * 100)}% of
             genres right. Its mistakes are not random: they follow the overlaps on the map. Switch the map to

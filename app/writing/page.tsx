@@ -4,7 +4,7 @@ import PortfolioHeader from '../../components/portfolio-header';
 import summary from '../../lib/spotify-summary.json';
 import { FINDING_AUDIT as F, SOURCE_AUDIT as A } from '../../lib/frequency-atlas-data';
 
-const ogTitle = 'Writing: two papers by Jeremy Renger';
+const ogTitle = 'Writing: Two Papers by Jeremy Renger';
 const ogDescription = "How Songs Sound vs. What They're Called (26,159 Spotify tracks) and Auditing an AI-Drafted Research Atlas (31 references, 56 findings). PDFs, November 2026.";
 
 export const metadata: Metadata = {

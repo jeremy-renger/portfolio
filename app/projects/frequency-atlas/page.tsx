@@ -6,7 +6,7 @@ import { FINDING_AUDIT as F, INTERVENTIONS, SOURCE_AUDIT as A } from '../../../l
 const sources = INTERVENTIONS.flatMap((i) => i.citations);
 const verified = sources.filter((c) => c.status === 'verified').length;
 
-const ogTitle = 'Frequency Atlas: a research atlas audited against its sources';
+const ogTitle = 'Frequency Atlas: A Research Atlas Audited Against Its Sources';
 const ogDescription = 'I checked all 31 references and 56 findings in an AI-written draft. 12 references and 4 findings held up. The atlas was rebuilt so every claim links to a verified source.';
 
 export const metadata: Metadata = {
@@ -56,7 +56,7 @@ export default function FrequencyAtlasPage() {
 
         <section className="project-columns reveal reveal-delay-1">
           <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Design decisions</h2>
+            <h2 className="section-title" style={{ marginTop: 0 }}>Design Decisions</h2>
             <ul className="detail-list">
               <li><strong>Evidence first:</strong> every intervention carries a strength badge, and lists sort strongest first.</li>
               <li><strong>Audit in view:</strong> the source chart shows, per intervention, how many sources have been checked.</li>
@@ -66,7 +66,7 @@ export default function FrequencyAtlasPage() {
           </article>
 
           <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Data model</h2>
+            <h2 className="section-title" style={{ marginTop: 0 }}>Data Model</h2>
             <ul className="detail-list">
               <li><strong>Intervention:</strong> category, sourced findings, per-band changes, evidence grade, citations.</li>
               <li><strong>Evidence:</strong> a four-level strength grade plus, for every source, an audit status and a link to the record.</li>
@@ -76,7 +76,7 @@ export default function FrequencyAtlasPage() {
         </section>
 
         <section className="detail-panel reveal reveal-delay-1">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Auditing my own sources</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>Auditing My Own Sources</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             The first draft of this atlas was written with an AI assistant. I checked every one of its {A.checked} references
             against the publisher, PubMed or the journal&apos;s own site. Only {A.correctAsWritten} were right as written.
@@ -100,7 +100,7 @@ export default function FrequencyAtlasPage() {
         </section>
 
         <section className="detail-panel reveal reveal-delay-1" id="visualizer">
-          <h2 className="section-title" style={{ marginTop: 0 }}>The atlas</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>The Atlas</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             Filter by intervention type and search findings. Every finding links to its source. Grades follow one rule applied to the cited sources: strong = a large randomized trial or meta-analysis; moderate = controlled human studies or systematic reviews; limited = small pilots only; preliminary = hypotheses, animal studies or secondhand reports only.
           </p>

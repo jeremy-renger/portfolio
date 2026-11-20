@@ -15,7 +15,7 @@ export default function HomePage() {
       <main className="main">
         <section className="hero reveal home-hero">
           <div className="home-hero-copy">
-            <p className="hero-subtitle">Software engineer · data visualization · interactive systems</p>
+            <p className="hero-subtitle">Software Engineer · Data Visualization · Interactive Systems</p>
             <h1 className="hero-title">I build interfaces that make dense technical data readable.</h1>
             <p className="hero-copy">
               Two case studies: a real-data map of {songs} songs built with UMAP and t-SNE, and a research atlas
@@ -32,12 +32,12 @@ export default function HomePage() {
             <div className="home-hero-stage">
               <div className="stage-panel stage-panel-primary">
                 <span className="stage-kicker">Spotify Audio Universe</span>
-                <strong className="stage-title">{songs} real songs</strong>
+                <strong className="stage-title">{songs} Real Songs</strong>
                 <span className="stage-metric">UMAP ↔ t-SNE morph · search · neighbors</span>
               </div>
               <div className="stage-panel stage-panel-secondary">
                 <span className="stage-kicker">Frequency Atlas</span>
-                <strong className="stage-title">Evidence-first design</strong>
+                <strong className="stage-title">Evidence-First Design</strong>
                 <span className="stage-metric">10 interventions · every source audited</span>
               </div>
             </div>
@@ -60,7 +60,7 @@ export default function HomePage() {
           </div>
           <div className="trust-item">
             <span className="trust-label">Code</span>
-            <a href={SITE.github} target="_blank" rel="noreferrer" className="trust-link">github.com/Jeremy-Renger</a>
+            <a href={SITE.github} target="_blank" rel="noreferrer" className="trust-link">github.com/jeremy-renger</a>
           </div>
         </section>
 
@@ -107,7 +107,7 @@ export default function HomePage() {
         </section>
 
         <section className="detail-panel reveal reveal-delay-2">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Get in touch</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>Get in Touch</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             Open to software engineering roles in data visualization, front end, and robotics software.
           </p>

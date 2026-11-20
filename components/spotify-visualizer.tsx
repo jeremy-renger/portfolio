@@ -360,7 +360,7 @@ export default function SpotifyVisualizer() {
     <section className="viz-shell detail-panel reveal" id="demo">
       <div className="viz-top">
         <div>
-          <h2 className="section-title" style={{ marginTop: 0 }}>Explore the map</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>Explore the Map</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             {data ? data.count.toLocaleString('en-US') : '26,159'} real songs, each placed by nine Spotify audio features. Nearby
             points sound alike. Switch projections to watch every track move between the two maps; hover to inspect,
@@ -445,7 +445,7 @@ export default function SpotifyVisualizer() {
 
       {pinned !== null && data ? (
         <section className="viz-track-card">
-          <h3>Pinned track</h3>
+          <h3>Pinned Track</h3>
           {card(pinned)}
           <p className="viz-track-meta" style={{ marginTop: 12 }}><strong>Closest on this map:</strong></p>
           <ul className="viz-neighbors">
