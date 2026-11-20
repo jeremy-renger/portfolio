@@ -1,76 +1,38 @@
-# Jeremy Renger Portfolio
+# Jeremy Renger: Portfolio
 
-Product-grade frontend work for dense, technical information.
+Interfaces that make dense technical data readable. Live: https://portfolio-iota-three-2cpi5mr7ku.vercel.app
 
-![Portfolio preview](./public/repo-preview.svg)
+![Spotify Audio Universe: 26,159 songs projected with UMAP](./public/readme-spotify.jpg)
 
-## Overview
-
-This portfolio is a single employer-facing surface built to show how Jeremy Renger approaches interactive systems, data visualization, and research-informed interface design.
-
-It centers on two case studies:
-
-- `Spotify Audio Universe` is the flagship interactive visualization project.
-- `Frequency Atlas` is the research interface case study.
-
-Together they show product thinking, frontend execution, and technical communication in one concise surface.
-
-## Featured Projects
+## Projects
 
 ### Spotify Audio Universe
+26,159 real Spotify songs (one per title and artist) placed by nine audio features, projected with **UMAP** and **t-SNE** and rendered on canvas. Switching projection animates every track between the two maps; hover, search and pin a track to see its nearest neighbours.
 
-A browser-native visualization system that turns a 25,000-track feature space into an explorable interface for clustering, filtering, and track-level inspection.
-
-What it demonstrates:
-
-- frontend-heavy product prototyping
-- interaction design for high-dimensional data
-- browser-native visualization workflows
+- **Pipeline** ([`scripts/build_spotify_embedding.py`](scripts/build_spotify_embedding.py)): de-duplicate by title and artist, z-score, UMAP (n_neighbors 30, min_dist 0.15) and t-SNE (perplexity 40) with fixed seeds, writing a columnar JSON payload (2.4 MB, about 0.7 MB compressed).
+- **Quality check:** trustworthiness at k=10 is 0.92 (UMAP) and 0.98 (t-SNE).
+- **Finding:** only 38% of a song's 10 nearest neighbours in feature space share its playlist genre (chance is about 17%). EDM (52%), rap (44%) and rock (43%) form real regions; pop, latin and R&B (28-29%) blend.
+- **Front end:** a single canvas pass with additive blending, device-pixel-ratio aware, with a 12 px spatial grid so hover lookup doesn't scan every point.
+- **Data:** [TidyTuesday 2020-01-21 Spotify songs](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-01-21), collected from the Spotify Web API. Not affiliated with Spotify.
 
 ### Frequency Atlas
+An information-design study: neuromodulation research ranges from replicated trials to single small studies, so the atlas grades every intervention by evidence strength, sorts by it, and shows sources inline. It is not medical advice.
 
-A research interface that organizes intervention studies across frequency bands, evidence levels, and protocol combinations into a navigable atlas.
-
-What it demonstrates:
-
-- translating dense research into a usable system
-- interface design for technical communication
-- systems thinking across data, presentation, and exploratory analysis
-
-## Tech Stack
-
-- Next.js
-- TypeScript
-- React
-- custom interaction design
-- browser-native visualization patterns
-
-## What This Portfolio Demonstrates
-
-- product-minded frontend engineering
-- interactive systems thinking
-- data visualization for complex information
-- research synthesis translated into usable interfaces
-
-## Local Run
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Project Routes
+Rebuild the song map data:
 
-- `/`
-- `/projects/spotify-audio-universe`
-- `/projects/frequency-atlas`
+```bash
+pip install umap-learn scikit-learn pandas
+curl -LO https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-21/spotify_songs.csv
+python scripts/build_spotify_embedding.py spotify_songs.csv public/data/spotify-universe.json
+```
 
-## Supporting Artifacts
+## Stack
 
-- `/research/frequency-atlas-download-guide.md`
-- `/research/frequency-atlas-research-paper.pdf`
-
-## Notes
-
-- Use the Vercel production URL as the primary public link from LinkedIn and resume materials.
-- Pin `portfolio` first on the GitHub profile for the clearest employer-facing story.
+TypeScript, React 19, Next.js 16 (App Router), canvas. Python, scikit-learn, umap-learn.

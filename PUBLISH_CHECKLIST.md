@@ -4,7 +4,7 @@
 
 1. Set repo-local real-name git identity
 2. Run:
-   - `../../ops/scripts/check-publish-readiness.sh /Users/waterxbear/Desktop/rzzodue/real-name/visualizers`
+   - `npm audit` (0 high/critical) and `npm run build`
 3. Add at least one real screenshot, still, or GIF reference
 4. Confirm homepage and both project routes are polished
 5. Add a clear stack summary

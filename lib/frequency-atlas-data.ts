@@ -76,7 +76,7 @@ export const FREQUENCY_BANDS: Record<string, FrequencyBand> = {
       "Sensory binding",
       "Moments of insight",
       "Advanced meditation states",
-      "40 Hz: Universal consciousness frequency",
+      "40 Hz: the most studied gamma stimulation frequency",
       "60-100 Hz: Expert meditators"
     ]
   }
@@ -175,8 +175,7 @@ export const INTERVENTIONS: Intervention[] = [
       "All meditation traditions show 60-110 Hz gamma amplitude higher than controls, correlated with experience",
       "Advanced meditators show high-frequency oscillations (beta/gamma); intermediate show low-frequency (theta/alpha)",
       "40 days of Yoga Nidra makes alpha waves dominant",
-      "Theta increases with distractions; alpha relates to fewer distractions and deeper states",
-      "Meditation is the 'gold standard' intervention - all effects are lasting and strengthen with practice"
+      "Theta increases with distractions; alpha relates to fewer distractions and deeper states"
     ],
     citations: [
       "Lutz et al. (2004). PNAS - Long-term meditators self-induce high-amplitude gamma synchrony",
@@ -286,7 +285,6 @@ export const INTERVENTIONS: Intervention[] = [
     accessibility: "clinical",
     timeInvestment: "Daily sessions, 2-6 weeks",
     keyFindings: [
-      "FDA approved accelerated deep TMS protocol for major depression (2025)",
       "Theta burst patterns enhance frontal theta oscillations and create positive emotional shifts",
       "Rhythmic TMS at 10 Hz entrains alpha oscillations with progressive enhancement over time",
       "Connectivity-guided TBS (targeting specific networks) shows 26-week sustained effects",
@@ -406,8 +404,7 @@ export const INTERVENTIONS: Intervention[] = [
       "810 nm pulsed at 40 Hz significantly increases power across ALL frequency bands",
       "40 Hz photobiomodulation reduced delta brainwave power in autistic children, correlating with symptom improvements",
       "Reduces oxidative stress, increases cerebral blood flow, enhances neurogenesis and synaptogenesis",
-      "NIR-TPBM changes spectral brain activity in alpha/beta ranges and improves visual function",
-      "40 Hz matches the frequency advanced meditators naturally generate - external entrainment to peak state"
+      "NIR-TPBM changes spectral brain activity in alpha/beta ranges and improves visual function"
     ],
     citations: [
       "Zomorrodi et al. (2019). NeuroImage - 40 Hz tPBM modulates neural oscillations",
@@ -530,11 +527,9 @@ export const INTERVENTIONS: Intervention[] = [
     accessibility: "clinical",
     timeInvestment: "20-40 sessions, 30-45 min each",
     keyFindings: [
-      "FDA-approved theta/beta ratio training for ADHD shows lasting effects",
       "QEEG brain mapping enables personalized protocols targeting specific patterns",
       "Alpha enhancement training reduces anxiety with effects lasting 6+ months",
       "Infra-low frequency neurofeedback (ILF-NFT) shows promise in double-blind trials",
-      "AI-enhanced neurofeedback dynamically guides brain into greater coherence",
       "Coherence training (synchronization between regions) particularly effective for peak performance"
     ],
     citations: [
@@ -592,9 +587,7 @@ export const INTERVENTIONS: Intervention[] = [
     accessibility: "universal",
     timeInvestment: "5-15 min, 2-3x daily",
     keyFindings: [
-      "Heart's electromagnetic field entrains brain rhythms, blood pressure, and respiration into synchronized coherence",
       "During coherence: ANS branches synchronize, multiple systems entrain to heart rhythm, heart-brain synchronization increases dramatically",
-      "Heart-rhythm synchronization between individuals possible during close interaction - measurable at 4 feet",
       "Global study shows oscillatory coupling between neural and cardiac rhythms - heart modulates brain alpha",
       "Positive emotions (appreciation, compassion, love) naturally create coherent heart rhythms",
       "Can be learned in single session; benefits immediate but deepen with practice"
@@ -648,10 +641,8 @@ export const INTERVENTIONS: Intervention[] = [
     timeInvestment: "Passive exposure, 30-60 min",
     keyFindings: [
       "EEG variations correlate with Schumann resonance changes across daily cycle",
-      "7.83 Hz is dominant brain wave rhythm of all mammals in alpha/resting state",
       "Randomized double-blind study: Schumann treatment improved sleep onset latency and total sleep time in insomnia",
       "Effects on circadian rhythms, blood pressure, hormonal secretion documented",
-      "Sits at boundary between theta (4-8 Hz) and alpha (8-13 Hz) - may serve as 'tuning frequency'",
       "Research quality is lower than other interventions - more rigorous studies needed"
     ],
     citations: [
@@ -692,7 +683,6 @@ export const INTERVENTIONS: Intervention[] = [
     keyFindings: [
       "528 Hz music significantly reduced cortisol and increased oxytocin after few minutes",
       "432 Hz tuning slowed heart rate compared to 440 Hz in double-blind study",
-      "Physical experiments: 432 Hz and 528 Hz generated organized harmonic structures",
       "CRITICAL: Many online 'solfeggio' videos are mislabeled marketing - frequency claims often false",
       "Claims about 'DNA repair' lack rigorous scientific support",
       "Effects may be due to general relaxation rather than frequency-specific mechanisms",
@@ -703,78 +693,5 @@ export const INTERVENTIONS: Intervention[] = [
       "Calamassi & Pomponi (2019). Alternative Therapies - 432 Hz vs 440 Hz heart rate effects",
       "Horowitz (2000). Medical Veritas - 528 Hz 'Love frequency' theory (note: lacks peer review)"
     ]
-  }
-];
-
-export const COMBINATION_PROTOCOLS = [
-  {
-    name: "Rapid Coherence Protocol",
-    interventions: ["photobiomodulation", "heart-coherence", "binaural-beats"],
-    description: "Achieve meditative brain states in 30 minutes",
-    protocol: "10 min 40 Hz tPBM → 5 min heart coherence breathing → 15 min theta binaural beats",
-    predictedEffect: "Fast-track to theta/alpha dominance with whole-brain coherence",
-    synergy: 1.5
-  },
-  {
-    name: "Neuroplasticity Accelerator",
-    interventions: ["tms-tbs", "vns", "neurofeedback"],
-    description: "Rapid antidepressant response with lasting effects",
-    protocol: "TBS over DLPFC (daily) + concurrent taVNS + alpha neurofeedback (3x/week)",
-    predictedEffect: "TMS creates plasticity window, VNS enhances consolidation, neurofeedback stabilizes",
-    synergy: 1.8
-  },
-  {
-    name: "Peak Performance Stack",
-    interventions: ["photobiomodulation", "neurofeedback", "heart-coherence", "meditation"],
-    description: "Sustained high performance with recovery",
-    protocol: "Morning: 40 Hz tPBM + gamma neurofeedback | Work: 10 Hz binaural + heart coherence | Evening: meditation + delta induction",
-    predictedEffect: "Gamma for peak cognition, alpha coherence for flow, delta for restoration",
-    synergy: 1.65
-  },
-  {
-    name: "Psychedelic-Mimicking Stack",
-    interventions: ["photobiomodulation", "vns", "tms-tbs"],
-    description: "Replicate psychedelic brainwave patterns non-invasively",
-    protocol: "Simultaneous: low-frequency tPBM + taVNS + alpha-suppressing TMS protocol",
-    predictedEffect: "Reduce alpha, increase delta/theta, enhance signal diversity",
-    synergy: 1.4
-  }
-];
-
-export const PERSONALIZATION_PROFILES = [
-  {
-    profile: "High Anxiety",
-    baseline: "Excessive beta (especially high beta 22-30 Hz), low alpha",
-    recommended: ["heart-coherence", "neurofeedback", "binaural-beats", "meditation"],
-    avoid: ["High-dose caffeine", "Beta enhancement protocols"],
-    rationale: "Need to increase alpha, decrease high beta, enhance parasympathetic tone"
-  },
-  {
-    profile: "Depression",
-    baseline: "Low left frontal alpha (alpha asymmetry), possible theta excess",
-    recommended: ["tms-tbs", "neurofeedback", "photobiomodulation", "heart-coherence"],
-    avoid: ["Excessive theta enhancement early in treatment"],
-    rationale: "Target left frontal activation, normalize alpha asymmetry"
-  },
-  {
-    profile: "ADHD",
-    baseline: "High theta/beta ratio (excess theta, insufficient beta)",
-    recommended: ["neurofeedback", "vns", "meditation"],
-    avoid: ["Theta enhancement", "Delta induction during day"],
-    rationale: "Decrease theta, increase SMR (13-15 Hz), improve sustained attention networks"
-  },
-  {
-    profile: "Peak Performance",
-    baseline: "Normal patterns, seeking enhancement",
-    recommended: ["neurofeedback", "photobiomodulation", "meditation", "heart-coherence"],
-    avoid: ["Overstimulation", "Excessive beta"],
-    rationale: "Enhance gamma for peak awareness, theta for creativity, alpha coherence for flow"
-  },
-  {
-    profile: "Insomnia",
-    baseline: "Excessive arousal at night, difficulty generating delta/theta",
-    recommended: ["heart-coherence", "binaural-beats", "schumann", "meditation"],
-    avoid: ["Beta/gamma enhancement in evening", "Screens before bed"],
-    rationale: "Enhance delta production, normalize circadian rhythms, increase parasympathetic tone"
   }
 ];
