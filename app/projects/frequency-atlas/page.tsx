@@ -50,7 +50,7 @@ export default function FrequencyAtlasPage() {
             <h2 className="section-title" style={{ marginTop: 0 }}>Design decisions</h2>
             <ul className="detail-list">
               <li><strong>Evidence first:</strong> every intervention carries a strength badge, and lists sort strongest first.</li>
-              <li><strong>Counts are not quality:</strong> the overview shows study counts coloured by strength, because many weak studies are still weak.</li>
+              <li><strong>Counts are not quality:</strong> the overview shows study counts colored by strength, because many weak studies are still weak.</li>
               <li><strong>Honest charts:</strong> band bars show the reported direction of change only, and say so.</li>
               <li><strong>Sources inline:</strong> each finding sits beside the papers it came from.</li>
             </ul>
@@ -75,7 +75,7 @@ export default function FrequencyAtlasPage() {
           <p className="atlas-notice" role="note">
             <strong>Not medical advice.</strong> This is an information-design project. Evidence grades are the
             author&apos;s own, based on study count, design and replication, not a formal clinical assessment. Findings
-            are summarised from the cited papers and have not been independently verified. Talk to a clinician before
+            are summarized from the cited papers and have not been independently verified. Talk to a clinician before
             trying any intervention.
           </p>
         </section>

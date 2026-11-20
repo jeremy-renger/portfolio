@@ -1684,13 +1684,13 @@ button:focus-visible {
 }
 .viz-track-name { margin: 0 0 0.2rem; color: #f2f8ff; font-size: 0.85rem; }
 .viz-track-meta { margin: 0.15rem 0; color: #a9c2dc; font-size: 0.74rem; }
-.viz-neighbours { list-style: none; margin: 0.3rem 0 0; padding: 0; display: grid; gap: 0.2rem; }
-.viz-neighbour {
+.viz-neighbors { list-style: none; margin: 0.3rem 0 0; padding: 0; display: grid; gap: 0.2rem; }
+.viz-neighbor {
   background: none; border: 0; padding: 0.15rem 0; color: #d9e7f7; font: inherit; font-size: 0.82rem;
   cursor: pointer; text-align: left;
 }
-.viz-neighbour:hover { color: #72c3ff; }
-.viz-neighbour span { color: #8fb4d7; }
+.viz-neighbor:hover { color: #72c3ff; }
+.viz-neighbor span { color: #8fb4d7; }
 .viz-footnote { margin-top: 0.8rem; color: #8fb4d7; font-size: 0.74rem; line-height: 1.5; }
 .viz-footnote a { color: #72c3ff; }
 
@@ -2578,3 +2578,14 @@ button:focus-visible {
   .header-actions { max-width: 100%; width: 100%; }
   .portfolio-title { font-size: 1.35rem; }
 }
+
+/* Confusion matrix */
+.cm { margin: 1rem 0 0; }
+.cm-grid { display: grid; gap: 3px; font-size: 0.8rem; }
+.cm-row { display: contents; }
+.cm-corner { color: #8fb4d7; font-size: 0.66rem; align-self: end; }
+.cm-head { color: #a9c2dc; text-align: center; padding: 0.3rem 0; font-weight: 600; }
+.cm-rowhead { text-align: left; align-self: center; }
+.cm-cell { text-align: center; padding: 0.55rem 0; color: #ecf8ff; background: rgba(255, 93, 143, calc(var(--a) * 0.85)); border-radius: 3px; }
+.cm-diag { background: rgba(76, 201, 240, calc(var(--a) * 0.9)); font-weight: 700; }
+.portfolio-shell { min-height: 100vh; }

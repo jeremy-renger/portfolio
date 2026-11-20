@@ -25,6 +25,7 @@ export default function HomePage() {
             <div className="actions">
               <Link href="/projects/spotify-audio-universe" className="btn btn-primary">Explore the song map</Link>
               <Link href="/projects/frequency-atlas" className="btn">See the research atlas</Link>
+              <Link href="/writing" className="btn">Read the paper</Link>
             </div>
           </div>
           <article className="home-feature-card">
@@ -32,7 +33,7 @@ export default function HomePage() {
               <div className="stage-panel stage-panel-primary">
                 <span className="stage-kicker">Spotify Audio Universe</span>
                 <strong className="stage-title">{songs} real songs</strong>
-                <span className="stage-metric">UMAP ↔ t-SNE morph · search · neighbours</span>
+                <span className="stage-metric">UMAP ↔ t-SNE morph · search · neighbors</span>
               </div>
               <div className="stage-panel stage-panel-secondary">
                 <span className="stage-kicker">Frequency Atlas</span>
@@ -66,17 +67,17 @@ export default function HomePage() {
         <section className="project-grid reveal reveal-delay-1">
           <article className="project-card">
             <Link href="/projects/spotify-audio-universe" className="project-card-shot" aria-label="Open Spotify Audio Universe">
-              <Image src="/projects/spotify-map.jpg" alt={`UMAP map of ${songs} Spotify songs, coloured by genre`} width={1400} height={867} sizes="(max-width: 900px) 100vw, 50vw" priority />
+              <Image src="/projects/spotify-map.jpg" alt={`UMAP map of ${songs} Spotify songs, colored by genre`} width={1400} height={867} sizes="(max-width: 900px) 100vw, 50vw" priority />
             </Link>
             <p className="project-card-kicker">Flagship project</p>
             <h2 className="project-card-title">Spotify Audio Universe</h2>
             <p className="project-card-copy">
               {songs} real Spotify songs placed by nine audio features. Switch between UMAP and t-SNE and watch every
-              point move; hover, search, and pin a track to see its nearest neighbours.
+              point move; hover, search, and pin a track to see its nearest neighbors.
             </p>
             <ul className="detail-list compact-list">
               <li><strong>Pipeline:</strong> Python, z-scored features, UMAP and t-SNE with fixed seeds.</li>
-              <li><strong>Finding:</strong> only {overall}% of a song&apos;s nearest neighbours share its genre label.</li>
+              <li><strong>Finding:</strong> only {overall}% of a song&apos;s nearest neighbors share its genre label.</li>
               <li><strong>Front end:</strong> every song drawn on one canvas, with grid-indexed hover.</li>
             </ul>
             <div className="actions">
@@ -86,7 +87,7 @@ export default function HomePage() {
 
           <article className="project-card">
             <Link href="/projects/frequency-atlas" className="project-card-shot" aria-label="Open Frequency Atlas">
-              <Image src="/projects/atlas-evidence.jpg" alt="Evidence overview: studies per intervention, coloured by evidence strength" width={1299} height={476} sizes="(max-width: 900px) 100vw, 50vw" />
+              <Image src="/projects/atlas-evidence.jpg" alt="Evidence overview: studies per intervention, colored by evidence strength" width={1299} height={476} sizes="(max-width: 900px) 100vw, 50vw" />
             </Link>
             <p className="project-card-kicker">Design study</p>
             <h2 className="project-card-title">Frequency Atlas</h2>

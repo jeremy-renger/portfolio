@@ -15,9 +15,9 @@ export default function PortfolioHeader({ title = SITE.name, kicker = SITE.role 
           <span className="portfolio-title">{title}</span>
         </Link>
         <nav className="header-actions" aria-label="Main">
-          <Link href="/" className="nav-link">Home</Link>
-          <Link href="/projects/spotify-audio-universe" className="nav-link">Spotify Audio Universe</Link>
+          <Link href="/projects/spotify-audio-universe" className="nav-link">Song Map</Link>
           <Link href="/projects/frequency-atlas" className="nav-link">Frequency Atlas</Link>
+          <Link href="/writing" className="nav-link">Writing</Link>
           <a href={SITE.github} className="nav-link" target="_blank" rel="noreferrer">GitHub</a>
           {SITE.linkedin ? <a href={SITE.linkedin} className="nav-link" target="_blank" rel="noreferrer">LinkedIn</a> : null}
           {SITE.email ? <a href={`mailto:${SITE.email}`} className="nav-link">Email</a> : null}

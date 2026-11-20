@@ -23,12 +23,13 @@ type Payload = {
   danceability: number[];
   acousticness: number[];
   tempo: number[];
+  agreement: number[];
   umap: number[];
   tsne: number[];
 };
 
 type Projection = 'umap' | 'tsne';
-type ColorMode = 'genre' | 'energy' | 'valence' | 'acousticness' | 'popularity';
+type ColorMode = 'genre' | 'fit' | 'energy' | 'valence' | 'acousticness' | 'popularity';
 
 const GENRE_COLORS = ['#4cc9f0', '#ffb703', '#ff5d8f', '#a78bfa', '#57cc99', '#ff7a45'];
 // Perceptually ordered ramp (dark violet -> teal -> yellow), readable on the dark canvas.
@@ -133,6 +134,8 @@ export default function SpotifyVisualizer() {
           return GENRE_COLORS[data.genre[i] % GENRE_COLORS.length];
         case 'popularity':
           return rampColor(data.popularity[i] / 100);
+        case 'fit':
+          return rampColor(data.agreement[i]);
         default:
           return rampColor(data[colorMode][i]);
       }
@@ -219,6 +222,56 @@ export default function SpotifyVisualizer() {
       ctx.arc(frame.xs[i], frame.ys[i], 7, 0, Math.PI * 2);
       ctx.stroke();
     };
+    if (colorMode === 'genre' && !dim) {
+      // Label each genre where it is most concentrated: the grid cell with the
+      // most songs of that genre, weighted by how much of the cell they make up.
+      ctx.font = '600 13px var(--font-work), system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      const CELLS = 24;
+      const cw = w / CELLS;
+      const chh = h / CELLS;
+      const counts = new Map<number, number[]>();
+      for (let i = 0; i < data.count; i += 1) {
+        if (hiddenGenres.has(data.genre[i])) continue;
+        const key = Math.floor(frame.ys[i] / chh) * CELLS + Math.floor(frame.xs[i] / cw);
+        let c = counts.get(key);
+        if (!c) {
+          c = data.genres.map(() => 0);
+          counts.set(key, c);
+        }
+        c[data.genre[i]] += 1;
+      }
+      data.genres.forEach((name, gi) => {
+        if (hiddenGenres.has(gi)) return;
+        let best = -1;
+        let bestScore = 0;
+        counts.forEach((c, key) => {
+          const total = c.reduce((t, v) => t + v, 0);
+          const n = c.at(gi) ?? 0;
+          if (total < 12) return;
+          const score = (n * n) / total;
+          if (score > bestScore) {
+            bestScore = score;
+            best = key;
+          }
+        });
+        if (best < 0) return;
+        const mx = ((best % CELLS) + 0.5) * cw;
+        const my = (Math.floor(best / CELLS) + 0.5) * chh;
+        const label = name.toUpperCase();
+        const lw = ctx.measureText(label).width + 14;
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = '#050b14';
+        ctx.fillRect(mx - lw / 2, my - 11, lw, 20);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = GENRE_COLORS[gi % GENRE_COLORS.length];
+        ctx.lineWidth = 1;
+        ctx.strokeRect(mx - lw / 2, my - 11, lw, 20);
+        ctx.fillStyle = GENRE_COLORS[gi % GENRE_COLORS.length];
+        ctx.fillText(label, mx, my + 4);
+      });
+      ctx.textAlign = 'start';
+    }
     if (pinned !== null) mark(pinned, '#ffffff');
     if (hover && hover.i !== pinned) mark(hover.i, 'rgba(255,255,255,0.7)');
   }, [data, frame, size, colorOf, hiddenGenres, matches, pinned, hover]);
@@ -254,7 +307,7 @@ export default function SpotifyVisualizer() {
   };
 
   // Tracks closest to the pinned one on the current map.
-  const neighbours = useMemo(() => {
+  const neighbors = useMemo(() => {
     if (!data || !frame || pinned === null) return [];
     const px = frame.xs[pinned];
     const py = frame.ys[pinned];
@@ -298,7 +351,7 @@ export default function SpotifyVisualizer() {
           {data.genres[data.genre[i]]} / {data.subgenres[data.subgenre[i]]} · popularity {data.popularity[i]} · {data.tempo[i]} BPM
         </p>
         <p className="viz-track-meta">
-          energy {data.energy[i].toFixed(2)} · valence {data.valence[i].toFixed(2)} · danceability {data.danceability[i].toFixed(2)} · acousticness {data.acousticness[i].toFixed(2)}
+          genre fit {Math.round(data.agreement[i] * 100)}% · energy {data.energy[i].toFixed(2)} · valence {data.valence[i].toFixed(2)} · danceability {data.danceability[i].toFixed(2)} · acousticness {data.acousticness[i].toFixed(2)}
         </p>
       </>
     ) : null;
@@ -311,7 +364,7 @@ export default function SpotifyVisualizer() {
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             {data ? data.count.toLocaleString('en-US') : '26,159'} real songs, each placed by nine Spotify audio features. Nearby
             points sound alike. Switch projections to watch every track move between the two maps; hover to inspect,
-            click to pin and see its neighbours, search for an artist.
+            click to pin and see its neighbors, search for an artist.
           </p>
         </div>
         <div className="viz-buttons">
@@ -331,11 +384,11 @@ export default function SpotifyVisualizer() {
             </button>
           ))}
         </div>
-        <div className="viz-control-group" role="group" aria-label="Colour by">
-          <span className="viz-control-label">Colour</span>
-          {(['genre', 'energy', 'valence', 'acousticness', 'popularity'] as const).map((m) => (
+        <div className="viz-control-group" role="group" aria-label="Color by">
+          <span className="viz-control-label">Color</span>
+          {(['genre', 'fit', 'energy', 'valence', 'acousticness', 'popularity'] as const).map((m) => (
             <button key={m} type="button" aria-pressed={colorMode === m} className={`btn ${colorMode === m ? 'btn-primary' : ''}`} onClick={() => setColorMode(m)}>
-              {m}
+              {m === 'fit' ? 'genre fit' : m}
             </button>
           ))}
         </div>
@@ -366,9 +419,9 @@ export default function SpotifyVisualizer() {
 
       {colorMode !== 'genre' ? (
         <div className="viz-ramp" aria-hidden="true">
-          <span>low {colorMode}</span>
+          <span>{colorMode === 'fit' ? 'sounds like other genres' : `low ${colorMode}`}</span>
           <span className="viz-ramp-bar" style={{ background: `linear-gradient(90deg, ${RAMP.map((c) => `rgb(${c.join(',')})`).join(',')})` }} />
-          <span>high</span>
+          <span>{colorMode === 'fit' ? 'sounds like its own genre' : 'high'}</span>
         </div>
       ) : null}
 
@@ -395,10 +448,10 @@ export default function SpotifyVisualizer() {
           <h3>Pinned track</h3>
           {card(pinned)}
           <p className="viz-track-meta" style={{ marginTop: 12 }}><strong>Closest on this map:</strong></p>
-          <ul className="viz-neighbours">
-            {neighbours.map((n) => (
+          <ul className="viz-neighbors">
+            {neighbors.map((n) => (
               <li key={n}>
-                <button type="button" className="viz-neighbour" onClick={() => setPinned(n)}>
+                <button type="button" className="viz-neighbor" onClick={() => setPinned(n)}>
                   {data.name[n]} · {data.artist[n]} <span>({data.genres[data.genre[n]]})</span>
                 </button>
               </li>
@@ -410,7 +463,7 @@ export default function SpotifyVisualizer() {
       {data ? (
         <p className="viz-footnote">
           UMAP ({data.method.umap.library}, n_neighbors {data.method.umap.n_neighbors}, min_dist {data.method.umap.min_dist}) and t-SNE
-          ({data.method.tsne.library}, perplexity {data.method.tsne.perplexity}) computed offline on z-scored features. Neighbourhood
+          ({data.method.tsne.library}, perplexity {data.method.tsne.perplexity}) computed offline on z-scored features. Neighborhood
           trustworthiness at k=10: UMAP {data.method.umap.trustworthiness10}, t-SNE {data.method.tsne.trustworthiness10}. Data:{' '}
           <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.name}</a>.
         </p>

@@ -164,7 +164,7 @@ export default function FrequencyAtlasVisualizer() {
 
               <div className="atlas-findings">
                 <h4>Reported findings</h4>
-                <p className="atlas-caption">Summarised from the sources below; not independently verified.</p>
+                <p className="atlas-caption">Summarized from the sources below; not independently verified.</p>
                 <ul>
                   {selected.keyFindings.slice(0, 5).map((finding) => (
                     <li key={finding}>{finding}</li>
@@ -184,7 +184,7 @@ export default function FrequencyAtlasVisualizer() {
 
       <section className="atlas-protocols" aria-label="Evidence overview">
         <h4>Evidence overview</h4>
-        <p className="atlas-caption">Studies per intervention, coloured by evidence strength. More studies is not the same as better evidence.</p>
+        <p className="atlas-caption">Studies per intervention, colored by evidence strength. More studies is not the same as better evidence.</p>
         <div className="ev-overview">
           {[...INTERVENTIONS].sort(byEvidence).map((item) => (
             <button key={item.id} type="button" className="ev-row" onClick={() => setSelectedId(item.id)}>

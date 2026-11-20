@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PortfolioHeader from '../../../components/portfolio-header';
+import ConfusionMatrix from '../../../components/confusion-matrix';
 import SpotifyVisualizer from '../../../components/spotify-visualizer';
 import summary from '../../../lib/spotify-summary.json';
 
@@ -15,7 +16,7 @@ const chanceAll = pct(Object.values(summary.purity.by_genre).reduce((t, v) => t 
 export const metadata: Metadata = {
   title: 'Spotify Audio Universe | Jeremy Renger',
   description:
-    'Real Spotify tracks projected with UMAP and t-SNE into an explorable map: morph between projections, search, inspect neighbours.'
+    'Real Spotify tracks projected with UMAP and t-SNE into an explorable map: morph between projections, search, inspect neighbors.'
 };
 
 
@@ -31,10 +32,13 @@ export default function SpotifyAudioUniversePage() {
           <p className="hero-copy">
             Each point is a real track placed by nine Spotify audio features. Real UMAP and t-SNE projections run
             offline in Python; the browser renders every point on canvas, morphs between the two maps, and lets
-            you search, hover, and inspect neighbours.
+            you search, hover, and inspect neighbors.
           </p>
           <div className="actions">
             <a href="#demo" className="btn btn-primary">Explore the map</a>
+            <a href="/papers/Renger_2026_Songs_vs_Genre.pdf" className="btn" target="_blank" rel="noreferrer">
+              Read the paper (PDF)
+            </a>
             <a
               href="https://github.com/Jeremy-Renger/portfolio/blob/main/scripts/build_spotify_embedding.py"
               className="btn"
@@ -70,15 +74,15 @@ export default function SpotifyAudioUniversePage() {
           <h2 className="section-title" style={{ marginTop: 0 }}>What the map shows</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
             Playlist genre is a weak label for how a song sounds. Across all songs, {overall}% of a song&apos;s ten
-            nearest neighbours in feature space share its genre, against about {chanceAll}% by chance. EDM, rock and rap form real
-            regions; pop, latin and R&amp;B blend into each other. Colour by energy or acousticness to see the
+            nearest neighbors in feature space share its genre, against about {chanceAll}% by chance. EDM, rock and rap form real
+            regions; pop, latin and R&amp;B blend into each other. Color by energy or acousticness to see the
             structure the features actually carry.
           </p>
           <table className="purity-table">
             <thead>
               <tr>
                 <th scope="col">Genre</th>
-                <th scope="col">Nearest 10 neighbours, same genre</th>
+                <th scope="col">Nearest 10 neighbors, same genre</th>
                 <th scope="col">Chance</th>
               </tr>
             </thead>
@@ -96,13 +100,23 @@ export default function SpotifyAudioUniversePage() {
           </table>
         </section>
 
+        <section className="detail-panel reveal reveal-delay-1">
+          <h2 className="section-title" style={{ marginTop: 0 }}>Which genres get confused</h2>
+          <p className="hero-copy" style={{ maxWidth: 'none' }}>
+            A random forest that hears only the nine audio features gets {Math.round(summary.confusion.accuracy * 100)}% of
+            genres right. Its mistakes are not random: they follow the overlaps on the map. Switch the map to
+            <strong> genre fit</strong> to see which songs sound more like another genre than their own.
+          </p>
+          <ConfusionMatrix />
+        </section>
+
         <section className="project-columns reveal reveal-delay-2">
           <article className="detail-panel">
             <h2 className="section-title" style={{ marginTop: 0 }}>Method</h2>
             <ul className="detail-list">
               <li><strong>Input:</strong> danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo; z-scored; one row per title and artist.</li>
               <li><strong>Projection:</strong> UMAP (n_neighbors 30, min_dist 0.15) and t-SNE (perplexity 40), fixed seed, so the maps are reproducible.</li>
-              <li><strong>Quality check:</strong> trustworthiness at k=10 is {summary.method.umap.trustworthiness10.toFixed(2)} for UMAP and {summary.method.tsne.trustworthiness10.toFixed(2)} for t-SNE: t-SNE keeps local neighbours better, UMAP keeps more of the global layout.</li>
+              <li><strong>Quality check:</strong> trustworthiness at k=10 is {summary.method.umap.trustworthiness10.toFixed(2)} for UMAP and {summary.method.tsne.trustworthiness10.toFixed(2)} for t-SNE: t-SNE keeps local neighbors better, UMAP keeps more of the global layout.</li>
               <li><strong>Morph:</strong> both maps share one frame, so switching animates each track from its UMAP to its t-SNE position.</li>
             </ul>
           </article>
