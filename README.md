@@ -1,6 +1,6 @@
 # Jeremy Renger: Portfolio
 
-Interfaces that make dense technical data readable. Live: https://portfolio-iota-three-2cpi5mr7ku.vercel.app
+Interfaces that make dense technical data readable. Live: https://jeremyrenger.vercel.app
 
 ![Spotify Audio Universe: 26,159 songs projected with UMAP](./public/readme-spotify.jpg)
 

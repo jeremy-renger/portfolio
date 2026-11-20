@@ -2,7 +2,7 @@
 export const SITE = {
   name: 'Jeremy Renger',
   role: 'Software engineer',
-  url: 'https://portfolio-iota-three-2cpi5mr7ku.vercel.app',
+  url: 'https://jeremyrenger.vercel.app',
   github: 'https://github.com/Jeremy-Renger',
   linkedin: 'https://www.linkedin.com/in/jeremyrenger',
   email: 'realjeremyrenger@gmail.com'
