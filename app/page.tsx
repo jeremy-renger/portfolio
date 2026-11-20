@@ -38,7 +38,7 @@ export default function HomePage() {
               <div className="stage-panel stage-panel-secondary">
                 <span className="stage-kicker">Frequency Atlas</span>
                 <strong className="stage-title">Evidence-first design</strong>
-                <span className="stage-metric">10 interventions · 31 cited sources</span>
+                <span className="stage-metric">10 interventions · every source audited</span>
               </div>
             </div>
             <figcaption className="home-feature-caption">Real data, measured claims, working code.</figcaption>
@@ -97,7 +97,7 @@ export default function HomePage() {
             </p>
             <ul className="detail-list compact-list">
               <li><strong>Problem:</strong> show uncertainty without hiding the content.</li>
-              <li><strong>Method:</strong> a typed data model, an evidence grade on everything, and sources inline.</li>
+              <li><strong>Method:</strong> a typed data model, evidence grades, and an audit status on every source.</li>
               <li><strong>Output:</strong> filterable atlas plus an evidence overview.</li>
             </ul>
             <div className="actions">

@@ -2589,3 +2589,13 @@ button:focus-visible {
 .cm-cell { text-align: center; padding: 0.55rem 0; color: #ecf8ff; background: rgba(255, 93, 143, calc(var(--a) * 0.85)); border-radius: 3px; }
 .cm-diag { background: rgba(76, 201, 240, calc(var(--a) * 0.9)); font-weight: 700; }
 .portfolio-shell { min-height: 100vh; }
+
+/* Source audit (Frequency Atlas) */
+.src-badge { font-style: normal; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.05rem 0.35rem; border-radius: 999px; border: 1px solid currentColor; margin-right: 0.3rem; }
+.src-verified { color: #5de1d4; }
+.src-unverified { color: #f2b94b; }
+.atlas-sources a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.src-track { display: flex; gap: 3px; background: none; height: 0.7rem; }
+.src-cell { display: block; height: 100%; border: 1px solid #f2b94b; border-radius: 2px; }
+.src-cell.is-ok { background: #5de1d4; border-color: #5de1d4; }
+.header-actions { flex-wrap: wrap; justify-content: flex-end; overflow: visible; }

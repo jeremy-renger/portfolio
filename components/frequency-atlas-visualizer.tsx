@@ -21,6 +21,7 @@ const categories: { value: Category; label: string }[] = [
 
 // The author's own grading of each evidence base, from study count, design and
 // replication. Not a formal GRADE assessment.
+// Grades come from the original draft and are pending the source audit.
 const EVIDENCE: Record<Intervention['evidence']['quality'], { label: string; rank: number; className: string }> = {
   gold: { label: 'Strong', rank: 0, className: 'ev-strong' },
   silver: { label: 'Moderate', rank: 1, className: 'ev-moderate' },
@@ -57,7 +58,9 @@ export default function FrequencyAtlasVisualizer() {
     }).sort(byEvidence);
   }, [query, category]);
 
-  const maxStudies = useMemo(() => Math.max(...INTERVENTIONS.map((i) => i.evidence.studyCount)), []);
+  const sourceTotal = INTERVENTIONS.reduce((t, i) => t + i.citations.length, 0);
+  const verifiedTotal = INTERVENTIONS.reduce((t, i) => t + i.citations.filter((c) => c.status === 'verified').length, 0);
+  const maxSources = useMemo(() => Math.max(...INTERVENTIONS.map((i) => i.citations.length)), []);
 
   const selected = useMemo(() => {
     return INTERVENTIONS.find((item) => item.id === selectedId) ?? filtered[0] ?? INTERVENTIONS[0] ?? null;
@@ -115,7 +118,7 @@ export default function FrequencyAtlasVisualizer() {
               <strong>{item.name}</strong>
               <span>
                 <em className={`ev-badge ${EVIDENCE[item.evidence.quality].className}`}>{EVIDENCE[item.evidence.quality].label}</em>{' '}
-                {item.evidence.studyCount} studies
+                {item.citations.filter((c) => c.status === 'verified').length}/{item.citations.length} sources verified
               </span>
               <small>{item.category}</small>
             </button>
@@ -132,11 +135,11 @@ export default function FrequencyAtlasVisualizer() {
 
               <div className="atlas-meta">
                 <span className={`ev-badge ${EVIDENCE[selected.evidence.quality].className}`}>
-                  {EVIDENCE[selected.evidence.quality].label} evidence
+                  Draft grade: {EVIDENCE[selected.evidence.quality].label.toLowerCase()}
                 </span>
-                <span>{selected.evidence.studyCount} studies · {selected.evidence.participants.toLocaleString()} participants</span>
-                <span>Replication: {selected.evidence.replicationStatus}</span>
-                <span>Pooled d ≈ {selected.evidence.effectSize.toFixed(1)}</span>
+                <span>
+                  {selected.citations.filter((c) => c.status === 'verified').length} of {selected.citations.length} sources verified
+                </span>
               </div>
               <p className="atlas-caption">Reported direction of change per band. Bar lengths are illustrative, not measured magnitudes.</p>
 
@@ -164,7 +167,7 @@ export default function FrequencyAtlasVisualizer() {
 
               <div className="atlas-findings">
                 <h4>Reported findings</h4>
-                <p className="atlas-caption">Summarized from the sources below; not independently verified.</p>
+                <p className="atlas-caption">From the original draft. Treat a finding as checked only when its source below is marked verified.</p>
                 <ul>
                   {selected.keyFindings.slice(0, 5).map((finding) => (
                     <li key={finding}>{finding}</li>
@@ -173,7 +176,10 @@ export default function FrequencyAtlasVisualizer() {
                 <h4>Sources</h4>
                 <ul className="atlas-sources">
                   {selected.citations.map((c) => (
-                    <li key={c}>{c}</li>
+                    <li key={c.text}>
+                      <em className={`src-badge src-${c.status}`}>{c.status === 'verified' ? '✓ verified' : 'unverified'}</em>{' '}
+                      {c.url ? <a href={c.url} target="_blank" rel="noreferrer">{c.text}</a> : c.text}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -182,27 +188,32 @@ export default function FrequencyAtlasVisualizer() {
         </section>
       </div>
 
-      <section className="atlas-protocols" aria-label="Evidence overview">
-        <h4>Evidence overview</h4>
-        <p className="atlas-caption">Studies per intervention, colored by evidence strength. More studies is not the same as better evidence.</p>
+      <section className="atlas-protocols" aria-label="Source audit">
+        <h4>Source audit</h4>
+        <p className="atlas-caption">
+          Sources per intervention: solid = checked against the publisher or PubMed, outline = not yet checked.
+          {' '}{verifiedTotal} of {sourceTotal} verified so far; 1 source that could not be found has been removed.
+        </p>
         <div className="ev-overview">
-          {[...INTERVENTIONS].sort(byEvidence).map((item) => (
-            <button key={item.id} type="button" className="ev-row" onClick={() => setSelectedId(item.id)}>
-              <span className="ev-row-name">{item.name}</span>
-              <span className="ev-row-track">
-                <span
-                  className={`ev-row-bar ${EVIDENCE[item.evidence.quality].className}`}
-                  style={{ width: `${(item.evidence.studyCount / maxStudies) * 100}%` }}
-                />
-              </span>
-              <span className="ev-row-n">{item.evidence.studyCount}</span>
-            </button>
-          ))}
-        </div>
-        <div className="ev-legend">
-          {Object.values(EVIDENCE).map((e) => (
-            <span key={e.label}><i className={`ev-dot ${e.className}`} /> {e.label}</span>
-          ))}
+          {[...INTERVENTIONS].sort(byEvidence).map((item) => {
+            const ok = item.citations.filter((c) => c.status === 'verified').length;
+            return (
+              <button key={item.id} type="button" className="ev-row" onClick={() => setSelectedId(item.id)}>
+                <span className="ev-row-name">{item.name}</span>
+                <span className="ev-row-track src-track">
+                  {item.citations.map((c, k) => (
+                    <span
+                      key={k}
+                      className={`src-cell ${c.status === 'verified' ? 'is-ok' : ''}`}
+                      style={{ width: `${100 / maxSources}%` }}
+                      title={c.text}
+                    />
+                  ))}
+                </span>
+                <span className="ev-row-n">{ok}/{item.citations.length}</span>
+              </button>
+            );
+          })}
         </div>
       </section>
     </div>

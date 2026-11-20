@@ -104,6 +104,15 @@ export interface ClinicalOutcome {
   durationOfEffect: string;
 }
 
+// Each source carries its audit status. "verified": found at the publisher or
+// PubMed and the details match. "unverified": not yet checked. Sources that
+// could not be found at all are removed, along with the findings they backed.
+export interface Citation {
+  text: string;
+  url: string;
+  status: "verified" | "unverified";
+}
+
 export interface Intervention {
   id: string;
   name: string;
@@ -118,7 +127,7 @@ export interface Intervention {
   accessibility: "universal" | "consumer" | "clinical" | "restricted";
   timeInvestment: string;
   keyFindings: string[];
-  citations: string[];
+  citations: Citation[];
 }
 
 export const INTERVENTIONS: Intervention[] = [
@@ -174,14 +183,12 @@ export const INTERVENTIONS: Intervention[] = [
     keyFindings: [
       "All meditation traditions show 60-110 Hz gamma amplitude higher than controls, correlated with experience",
       "Advanced meditators show high-frequency oscillations (beta/gamma); intermediate show low-frequency (theta/alpha)",
-      "40 days of Yoga Nidra makes alpha waves dominant",
       "Theta increases with distractions; alpha relates to fewer distractions and deeper states"
     ],
     citations: [
-      "Lutz et al. (2004). PNAS - Long-term meditators self-induce high-amplitude gamma synchrony",
-      "Travis & Shear (2010). Consciousness & Cognition - Focused attention, open monitoring meditation",
-      "Braboszcz et al. (2017). PLoS ONE - Meditation experience correlates with gamma power",
-      "Sharma et al. (2020). Frontiers - Yoga Nidra creates alpha dominance after 40 days"
+      { text: "Lutz et al. (2004). PNAS - Long-term meditators self-induce high-amplitude gamma synchrony", url: "", status: "unverified" },
+      { text: "Travis & Shear (2010). Consciousness & Cognition - Focused attention, open monitoring meditation", url: "", status: "unverified" },
+      { text: "Braboszcz et al. (2017). PLoS ONE - Meditation experience correlates with gamma power", url: "", status: "unverified" }
     ]
   },
   {
@@ -236,9 +243,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Can be combined with meditation or used alone for quick state shifts"
     ],
     citations: [
-      "Jirakittayakorn & Wongsawat (2017). Frontiers - 6 Hz binaural beats enhance cortical connectivity",
-      "Chaieb et al. (2015). Frontiers - Auditory beat stimulation and brainwave entrainment",
-      "Garcia-Argibay et al. (2019). Psychological Research - Meta-analysis of binaural beat efficacy"
+      { text: "Jirakittayakorn & Wongsawat (2017). Frontiers - 6 Hz binaural beats enhance cortical connectivity", url: "", status: "unverified" },
+      { text: "Chaieb et al. (2015). Frontiers - Auditory beat stimulation and brainwave entrainment", url: "", status: "unverified" },
+      { text: "Garcia-Argibay et al. (2019). Psychological Research - Meta-analysis of binaural beat efficacy", url: "", status: "unverified" }
     ]
   },
   {
@@ -291,9 +298,9 @@ export const INTERVENTIONS: Intervention[] = [
       "'Closed-loop' stimulation adjusting to real-time brain state shows enhanced efficacy"
     ],
     citations: [
-      "Blumberger et al. (2018). Lancet - Theta burst stimulation for treatment-resistant depression",
-      "Cole et al. (2022). JAMA Psychiatry - Stanford Accelerated Intelligent Neuromodulation Therapy (SAINT)",
-      "Thut et al. (2011). PNAS - Rhythmic TMS entrains alpha oscillations"
+      { text: "Blumberger et al. (2018). Lancet - Theta burst stimulation for treatment-resistant depression", url: "", status: "unverified" },
+      { text: "Cole et al. (2022). American Journal of Psychiatry 179(2) - Stanford Neuromodulation Therapy (SNT): a double-blind randomized controlled trial", url: "https://pubmed.ncbi.nlm.nih.gov/34711062/", status: "verified" },
+      { text: "Thut et al. (2011). Current Biology 21(14) - Rhythmic TMS causes local entrainment of natural oscillatory signatures", url: "https://doi.org/10.1016/j.cub.2011.05.049", status: "verified" }
     ]
   },
   {
@@ -347,9 +354,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Non-invasive taVNS offers similar benefits to implanted VNS for many applications"
     ],
     citations: [
-      "Assenza et al. (2017). Epilepsy Research - VNS modulates EEG synchronization",
-      "Cao et al. (2017). Brain Stimulation - VNS enhances cortical plasticity via noradrenergic system",
-      "Burger et al. (2020). Brain Stimulation - taVNS modulates brain networks"
+      { text: "Assenza et al. (2017). Epilepsy Research - VNS modulates EEG synchronization", url: "", status: "unverified" },
+      { text: "Cao et al. (2017). Brain Stimulation - VNS enhances cortical plasticity via noradrenergic system", url: "", status: "unverified" },
+      { text: "Burger et al. (2020). Brain Stimulation - taVNS modulates brain networks", url: "", status: "unverified" }
     ]
   },
   {
@@ -407,9 +414,9 @@ export const INTERVENTIONS: Intervention[] = [
       "NIR-TPBM changes spectral brain activity in alpha/beta ranges and improves visual function"
     ],
     citations: [
-      "Zomorrodi et al. (2019). NeuroImage - 40 Hz tPBM modulates neural oscillations",
-      "Wang et al. (2019). Neurophotonics - tPBM for autism spectrum disorder",
-      "Salehpour et al. (2018). Journal of Alzheimer's Disease - tPBM shows promise for neurodegenerative diseases"
+      { text: "Zomorrodi et al. (2019). Scientific Reports 9 - Pulsed near-infrared transcranial and intranasal photobiomodulation significantly modulates neural oscillations: a pilot exploratory study", url: "https://doi.org/10.1038/s41598-019-42693-x", status: "verified" },
+      { text: "Wang et al. (2019). Neurophotonics - tPBM for autism spectrum disorder", url: "", status: "unverified" },
+      { text: "Salehpour et al. (2018). Journal of Alzheimer's Disease - tPBM shows promise for neurodegenerative diseases", url: "", status: "unverified" }
     ]
   },
   {
@@ -471,9 +478,9 @@ export const INTERVENTIONS: Intervention[] = [
       "CRITICAL: Requires screening, set/setting, and integration support for safety and efficacy"
     ],
     citations: [
-      "Carhart-Harris et al. (2016). PNAS - Neural correlates of the LSD experience",
-      "Timmermann et al. (2019). Scientific Reports - DMT alters cortical travelling waves",
-      "Barrett et al. (2020). Neuroscience & Biobehavioral Reviews - Psychedelics and neuroplasticity"
+      { text: "Carhart-Harris et al. (2016). PNAS - Neural correlates of the LSD experience", url: "", status: "unverified" },
+      { text: "Timmermann et al. (2019). Scientific Reports 9 - Neural correlates of the DMT experience assessed with multivariate EEG", url: "https://doi.org/10.1038/s41598-019-51974-4", status: "verified" },
+      { text: "Barrett et al. (2020). Neuroscience & Biobehavioral Reviews - Psychedelics and neuroplasticity", url: "", status: "unverified" }
     ]
   },
   {
@@ -533,9 +540,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Coherence training (synchronization between regions) particularly effective for peak performance"
     ],
     citations: [
-      "Arns et al. (2014). Clinical EEG & Neuroscience - Neurofeedback for ADHD meta-analysis",
-      "Hammond (2005). Journal of Adult Development - Neurofeedback for anxiety",
-      "Gruzelier (2014). Frontiers - Neurofeedback for peak performance"
+      { text: "Arns et al. (2014). Clinical EEG & Neuroscience - Neurofeedback for ADHD meta-analysis", url: "", status: "unverified" },
+      { text: "Hammond (2005). Journal of Adult Development - Neurofeedback for anxiety", url: "", status: "unverified" },
+      { text: "Gruzelier (2014). Neuroscience & Biobehavioral Reviews 44 - EEG-neurofeedback for optimising performance (three-part review)", url: "https://doi.org/10.1016/j.neubiorev.2013.09.015", status: "verified" }
     ]
   },
   {
@@ -593,9 +600,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Can be learned in single session; benefits immediate but deepen with practice"
     ],
     citations: [
-      "McCraty et al. (2009). International Journal of Psychophysiology - Heart-brain coherence",
-      "McCraty & Zayas (2014). Frontiers - Cardiac coherence and emotional self-regulation",
-      "Shaffer et al. (2014). Frontiers - Heart rate variability: New perspectives"
+      { text: "McCraty et al. (2009). International Journal of Psychophysiology - Heart-brain coherence", url: "", status: "unverified" },
+      { text: "McCraty & Zayas (2014). Frontiers - Cardiac coherence and emotional self-regulation", url: "", status: "unverified" },
+      { text: "Shaffer et al. (2014). Frontiers - Heart rate variability: New perspectives", url: "", status: "unverified" }
     ]
   },
   {
@@ -646,9 +653,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Research quality is lower than other interventions - more rigorous studies needed"
     ],
     citations: [
-      "Cherry (2002). Medical Hypotheses - Schumann resonances and human health",
-      "Pobachenko et al. (2006). Biophysics - Human functional systems synchronization with Schumann resonance",
-      "Persinger (1987). Medical Hypotheses - Geomagnetic activity and enhanced mortality"
+      { text: "Cherry (2002). Natural Hazards 26(3) - Schumann resonances, a plausible biophysical mechanism for the human health effects of solar/geomagnetic activity", url: "https://doi.org/10.1023/A:1015637127504", status: "verified" },
+      { text: "Pobachenko et al. (2006). Biophysics - Human functional systems synchronization with Schumann resonance", url: "", status: "unverified" },
+      { text: "Persinger (1987). Medical Hypotheses - Geomagnetic activity and enhanced mortality", url: "", status: "unverified" }
     ]
   },
   {
@@ -689,9 +696,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Requires significantly more rigorous research before strong claims can be made"
     ],
     citations: [
-      "Akimoto et al. (2018). Health - 528 Hz music reduces stress hormones",
-      "Calamassi & Pomponi (2019). Alternative Therapies - 432 Hz vs 440 Hz heart rate effects",
-      "Horowitz (2000). Medical Veritas - 528 Hz 'Love frequency' theory (note: lacks peer review)"
+      { text: "Akimoto et al. (2018). Health - 528 Hz music reduces stress hormones", url: "", status: "unverified" },
+      { text: "Calamassi & Pomponi (2019). Double-blind cross-over pilot study of music tuned to 432 Hz vs 440 Hz (small sample; journal not yet confirmed)", url: "", status: "unverified" },
+      { text: "Horowitz (2000). Medical Veritas - 528 Hz 'Love frequency' theory (note: lacks peer review)", url: "", status: "unverified" }
     ]
   }
 ];
