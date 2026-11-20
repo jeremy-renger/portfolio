@@ -4,9 +4,15 @@ import PortfolioHeader from '../../components/portfolio-header';
 import summary from '../../lib/spotify-summary.json';
 import { FINDING_AUDIT as F, SOURCE_AUDIT as A } from '../../lib/frequency-atlas-data';
 
+const ogTitle = 'Writing: two papers by Jeremy Renger';
+const ogDescription = "How Songs Sound vs. What They're Called (26,159 Spotify tracks) and Auditing an AI-Drafted Research Atlas (31 references, 56 findings). PDFs, November 2026.";
+
 export const metadata: Metadata = {
   title: 'Writing | Jeremy Renger',
-  description: 'Technical write-ups behind the portfolio projects.'
+  description: ogDescription,
+  alternates: { canonical: '/writing' },
+  openGraph: { type: 'website', url: '/writing', siteName: 'Jeremy Renger', title: ogTitle, description: ogDescription },
+  twitter: { card: 'summary_large_image', title: ogTitle, description: ogDescription }
 };
 
 const pct = (v: number) => `${Math.round(v * 100)}%`;

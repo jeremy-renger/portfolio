@@ -6,10 +6,15 @@ import { FINDING_AUDIT as F, INTERVENTIONS, SOURCE_AUDIT as A } from '../../../l
 const sources = INTERVENTIONS.flatMap((i) => i.citations);
 const verified = sources.filter((c) => c.status === 'verified').length;
 
+const ogTitle = 'Frequency Atlas: a research atlas audited against its sources';
+const ogDescription = 'I checked all 31 references and 56 findings in an AI-written draft. 12 references and 4 findings held up. The atlas was rebuilt so every claim links to a verified source.';
+
 export const metadata: Metadata = {
   title: 'Frequency Atlas | Jeremy Renger',
-  description:
-    'An interface design study: presenting research of very uneven quality so weak evidence looks weak and strong evidence looks strong.'
+  description: ogDescription,
+  alternates: { canonical: '/projects/frequency-atlas' },
+  openGraph: { type: 'website', url: '/projects/frequency-atlas', siteName: 'Jeremy Renger', title: ogTitle, description: ogDescription },
+  twitter: { card: 'summary_large_image', title: ogTitle, description: ogDescription }
 };
 
 export default function FrequencyAtlasPage() {

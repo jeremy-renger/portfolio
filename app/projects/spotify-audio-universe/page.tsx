@@ -13,10 +13,15 @@ const purity = Object.entries(summary.purity.by_genre)
 const overall = pct(summary.purity.overall);
 const chanceAll = pct(Object.values(summary.purity.by_genre).reduce((t, v) => t + v.chance * v.chance, 0));
 
+const ogTitle = 'Spotify Audio Universe: 26,159 songs mapped by how they sound';
+const ogDescription = "Interactive UMAP/t-SNE map of 26,159 real Spotify songs. Only 38% of a song's nearest neighbors share its genre. Morph between projections, search and inspect neighbors.";
+
 export const metadata: Metadata = {
   title: 'Spotify Audio Universe | Jeremy Renger',
-  description:
-    'Real Spotify tracks projected with UMAP and t-SNE into an explorable map: morph between projections, search, inspect neighbors.'
+  description: ogDescription,
+  alternates: { canonical: '/projects/spotify-audio-universe' },
+  openGraph: { type: 'website', url: '/projects/spotify-audio-universe', siteName: 'Jeremy Renger', title: ogTitle, description: ogDescription },
+  twitter: { card: 'summary_large_image', title: ogTitle, description: ogDescription }
 };
 
 
