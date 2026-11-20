@@ -21,7 +21,7 @@ const categories: { value: Category; label: string }[] = [
 
 // The author's own grading of each evidence base, from study count, design and
 // replication. Not a formal GRADE assessment.
-// Grades come from the original draft and are pending the source audit.
+// Grades follow the rule in lib/frequency-atlas-data.ts, applied to cited sources.
 const EVIDENCE: Record<Intervention['evidence']['quality'], { label: string; rank: number; className: string }> = {
   gold: { label: 'Strong', rank: 0, className: 'ev-strong' },
   silver: { label: 'Moderate', rank: 1, className: 'ev-moderate' },
@@ -33,12 +33,10 @@ const byEvidence = (a: Intervention, b: Intervention) =>
   EVIDENCE[a.evidence.quality].rank - EVIDENCE[b.evidence.quality].rank ||
   b.citations.filter((c) => c.status === 'verified').length - a.citations.filter((c) => c.status === 'verified').length;
 
-function effectToAfter(change: string, magnitude: string) {
-  const map: Record<string, number> = { small: 12, medium: 22, large: 34 };
-  const delta = map[magnitude] ?? 12;
-  if (change === 'increase') return Math.min(92, 50 + delta);
-  if (change === 'decrease') return Math.max(8, 50 - delta);
-  return 62;
+function effectToAfter(change: string) {
+  if (change === 'increase') return 74;
+  if (change === 'decrease') return 28;
+  return 50;
 }
 
 export default function FrequencyAtlasVisualizer() {
@@ -54,7 +52,7 @@ export default function FrequencyAtlasVisualizer() {
         q.length === 0 ||
         item.name.toLowerCase().includes(q) ||
         item.description.toLowerCase().includes(q) ||
-        item.keyFindings.some((k) => k.toLowerCase().includes(q));
+        item.keyFindings.some((k) => k.text.toLowerCase().includes(q));
       return byCategory && byQuery;
     }).sort(byEvidence);
   }, [query, category]);
@@ -77,9 +75,9 @@ export default function FrequencyAtlasVisualizer() {
         range: band.range,
         color: band.color,
         before: 50,
-        after: effect ? effectToAfter(effect.change, effect.magnitude) : 50,
+        after: effect ? effectToAfter(effect.change) : 50,
         change: effect?.change ?? 'none',
-        magnitude: effect?.magnitude ?? 'none'
+        source: effect ? effect.source : null
       };
     });
   }, [selected]);
@@ -136,13 +134,13 @@ export default function FrequencyAtlasVisualizer() {
 
               <div className="atlas-meta">
                 <span className={`ev-badge ${EVIDENCE[selected.evidence.quality].className}`}>
-                  Draft grade: {EVIDENCE[selected.evidence.quality].label.toLowerCase()}
+                  {EVIDENCE[selected.evidence.quality].label} evidence
                 </span>
                 <span>
                   {selected.citations.filter((c) => c.status === 'verified').length} of {selected.citations.length} sources verified
                 </span>
               </div>
-              <p className="atlas-caption">Reported direction of change per band. Bar lengths are illustrative, not measured magnitudes.</p>
+              <p className="atlas-caption">Direction of change reported by the cited source for each band. Bars show direction only, not size; "not established" means no cited source reports a change.</p>
 
               <div className="atlas-bands">
                 {bandRows.map((band) => (
@@ -160,24 +158,39 @@ export default function FrequencyAtlasVisualizer() {
                       </div>
                     </div>
                     <div className="atlas-band-status">
-                      {band.change !== 'none' ? `${band.change} (${band.magnitude})` : 'no shift'}
+                      {band.change === 'none' ? (
+                        'not established'
+                      ) : (
+                        <>
+                          {band.change === 'modulate' ? 'changed' : band.change}{' '}
+                          <a className="src-ref" href={`#src-${selected.id}-${band.source}`}>[{(band.source ?? 0) + 1}]</a>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
 
               <div className="atlas-findings">
-                <h4>Reported findings</h4>
-                <p className="atlas-caption">From the original draft and not yet matched to specific sources. "Verified" below means the paper is real and cited correctly, not that it supports each finding.</p>
+                <h4>Findings</h4>
+                <p className="atlas-caption">Each finding is matched to the source whose abstract supports it. Author&apos;s notes are labeled.</p>
                 <ul>
-                  {selected.keyFindings.slice(0, 5).map((finding) => (
-                    <li key={finding}>{finding}</li>
+                  {selected.keyFindings.map((f) => (
+                    <li key={f.text}>
+                      {f.text}{' '}
+                      {f.source === null ? (
+                        <em className="src-badge src-note-badge">author&apos;s note</em>
+                      ) : (
+                        <a className="src-ref" href={`#src-${selected.id}-${f.source}`}>[{f.source + 1}]</a>
+                      )}
+                    </li>
                   ))}
                 </ul>
                 <h4>Sources</h4>
                 <ul className="atlas-sources">
-                  {selected.citations.map((c) => (
-                    <li key={c.text}>
+                  {selected.citations.map((c, k) => (
+                    <li key={c.text} id={`src-${selected.id}-${k}`}>
+                      <span className="src-num">[{k + 1}]</span>{' '}
                       <em className={`src-badge src-${c.status}`}>{c.status === 'verified' ? '✓ verified' : 'unverified'}</em>{' '}
                       {c.url ? <a href={c.url} target="_blank" rel="noreferrer">{c.text}</a> : c.text}
                       {c.note ? <span className="src-note"> {c.note}</span> : null}

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import PortfolioHeader from '../../../components/portfolio-header';
 import FrequencyAtlasVisualizer from '../../../components/frequency-atlas-visualizer';
-import { INTERVENTIONS, SOURCE_AUDIT as A } from '../../../lib/frequency-atlas-data';
+import { FINDING_AUDIT as F, INTERVENTIONS, SOURCE_AUDIT as A } from '../../../lib/frequency-atlas-data';
 
 const sources = INTERVENTIONS.flatMap((i) => i.citations);
 const verified = sources.filter((c) => c.status === 'verified').length;
@@ -86,20 +86,21 @@ export default function FrequencyAtlasPage() {
             <li><strong>Fixed:</strong> {A.realButWrongDetails} citations pointed at real papers with the wrong journal, title or year. One &quot;human mortality&quot; source was really a study in rats.</li>
             <li><strong>Replaced or removed:</strong> {A.notFound} could not be found. {A.replacedWithRealSources} were replaced by real studies that support the same point; the rest were removed with the findings they backed, including one that a real trial contradicts.</li>
             <li><strong>Also removed:</strong> the draft&apos;s study counts, participant numbers, effect sizes, safety ratings and clinical-outcome scores, none of which had a source.</li>
-            <li><strong>Now:</strong> {verified} of {sources.length} sources on this page are verified and linked, with each correction noted beside it. Next: match every finding to the sentence in the paper that supports it.</li>
+            <li><strong>Findings:</strong> of the draft&apos;s {F.drafted} findings, only {F.supportedAsWritten} matched their source as written. {F.rewordedToMatchSource} were reworded to say what the source actually says, {F.contradictedBySource} were contradicted by their own source and corrected, and {F.removedNoSource} had no support and were removed.</li>
+            <li><strong>Now:</strong> {verified} of {sources.length} sources verified and linked; every finding and every band change points to its source; grades follow one stated rule.</li>
           </ul>
         </section>
 
         <section className="detail-panel reveal reveal-delay-1" id="visualizer">
           <h2 className="section-title" style={{ marginTop: 0 }}>The atlas</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            Filter by intervention type, search findings, and see which sources have been checked. Grades are from the original draft and are being re-assessed as sources are verified.
+            Filter by intervention type and search findings. Every finding links to its source. Grades follow one rule applied to the cited sources: strong = a large randomized trial or meta-analysis; moderate = controlled human studies or systematic reviews; limited = small pilots only; preliminary = hypotheses, animal studies or secondhand reports only.
           </p>
           <FrequencyAtlasVisualizer />
           <p className="atlas-notice" role="note">
-            <strong>Not medical advice.</strong> This is an information-design project. Evidence grades are the
-            author&apos;s own and not a formal clinical assessment. Sources marked verified are real and correctly
-            cited; the findings themselves come from the original draft and have not each been checked against them. Talk to a clinician before trying any intervention.
+            <strong>Not medical advice.</strong> This is an information-design project. Evidence grades follow the
+            rule stated above and are not a formal clinical assessment. Every finding is matched to a verified source
+            or labeled as the author&apos;s note. Talk to a clinician before trying any intervention.
           </p>
         </section>
       </main>

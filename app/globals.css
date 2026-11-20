@@ -2607,3 +2607,10 @@ button:focus-visible {
 .audit-fixed { background: #f2b94b; }
 .audit-missing { background: #f07f6e; }
 .audit-unknown { background: rgba(255, 255, 255, 0.35); }
+
+.src-ref { font-size: 0.75rem; color: #5de1d4; text-decoration: none; vertical-align: super; }
+.src-ref:hover { text-decoration: underline; }
+.src-num { font-size: 0.72rem; opacity: 0.7; }
+.src-note-badge { color: #c9b6ff; }
+.atlas-sources { list-style: none; padding-left: 0; }
+.atlas-sources li { margin-bottom: 0.4rem; }

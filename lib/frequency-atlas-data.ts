@@ -1,97 +1,62 @@
-// data/interventions.ts
-// Complete research database for The Frequency Atlas
+// Frequency Atlas data. Every finding and band change points to a cited,
+// verified source; see SOURCE_AUDIT and FINDING_AUDIT at the end of the file.
 
 export interface FrequencyBand {
   name: string;
   range: string;
   color: string;
   description: string;
-  functions: string[];
 }
 
 export const FREQUENCY_BANDS: Record<string, FrequencyBand> = {
   delta: {
     name: "Delta",
     range: "0.5-4 Hz",
-    color: "#1e3a8a", // Deep blue
-    description: "Deep sleep, healing, regeneration",
-    functions: [
-      "Deep sleep and unconscious processing",
-      "Growth hormone release",
-      "Immune system function",
-      "Tissue repair and healing",
-      "Parasympathetic dominance"
-    ]
+    color: "#1e3a8a",
+    description: "Dominant in deep sleep"
   },
   theta: {
     name: "Theta",
     range: "4-8 Hz",
-    color: "#7c3aed", // Purple/Violet
-    description: "Deep meditation, creativity, memory",
-    functions: [
-      "REM sleep and deep meditation",
-      "Creative insight and inspiration",
-      "Memory consolidation",
-      "Emotional processing",
-      "Hippocampal activity",
-      "Flow states"
-    ]
+    color: "#7c3aed",
+    description: "Prominent in drowsiness and some meditative states"
   },
   alpha: {
     name: "Alpha",
     range: "8-13 Hz",
-    color: "#10b981", // Green
-    description: "Relaxed focus, optimal learning",
-    functions: [
-      "Relaxed wakefulness",
-      "Meditation entry point",
-      "Optimal learning state",
-      "Reduced anxiety",
-      "Sensory gating",
-      "Mind-body bridge",
-      "Heart coherence frequency"
-    ]
+    color: "#10b981",
+    description: "Prominent in relaxed wakefulness with eyes closed"
   },
   beta: {
     name: "Beta",
     range: "13-30 Hz",
-    color: "#fbbf24", // Yellow
-    description: "Active thinking, problem-solving",
-    functions: [
-      "Active cognitive processing",
-      "Focused attention and alertness",
-      "Problem-solving",
-      "Decision-making",
-      "SMR (13-15 Hz): Calm focus"
-    ]
+    color: "#fbbf24",
+    description: "Associated with active, alert thinking"
   },
   gamma: {
     name: "Gamma",
     range: "30-100 Hz",
-    color: "#ef4444", // Red/Orange
-    description: "Peak consciousness, insight",
-    functions: [
-      "Peak awareness and consciousness",
-      "Information integration",
-      "Sensory binding",
-      "Moments of insight",
-      "Advanced meditation states",
-      "40 Hz: the most studied gamma stimulation frequency",
-      "60-100 Hz: Expert meditators"
-    ]
+    color: "#ef4444",
+    description: "Fast activity linked to attention and sensory processing"
   }
 };
 
+// Grade rule, applied to the cited sources only:
+// gold (Strong): a large randomized trial or a meta-analysis
+// silver (Moderate): controlled human studies or systematic reviews
+// bronze (Limited): small pilots only
+// preliminary: hypothesis papers, animal studies or secondhand reports only
 export interface Evidence {
   quality: "gold" | "silver" | "bronze" | "preliminary";
   replicationStatus: "replicated" | "emerging" | "preliminary";
 }
 
+// Band changes reported by a matched source (index into citations).
+// Bands with no entry: no established change in the sources.
 export interface FrequencyEffect {
   band: keyof typeof FREQUENCY_BANDS;
   change: "increase" | "decrease" | "modulate";
-  magnitude: "small" | "medium" | "large";
-  region?: string;
+  source: number;
 }
 
 // Each source carries its audit status. "verified": found at the publisher or
@@ -104,17 +69,21 @@ export interface Citation {
   note?: string;
 }
 
+// Each finding points at the citation (by index) whose abstract supports it.
+// source null = the author's own note, labeled as such on the page.
+export interface Finding {
+  text: string;
+  source: number | null;
+}
+
 export interface Intervention {
   id: string;
   name: string;
   category: "meditation" | "sound" | "electromagnetic" | "neuromodulation" | "pharmacological" | "physiological";
   description: string;
-  mechanism: string;
   frequencyEffects: FrequencyEffect[];
   evidence: Evidence;
-  accessibility: "universal" | "consumer" | "clinical" | "restricted";
-  timeInvestment: string;
-  keyFindings: string[];
+  keyFindings: Finding[];
   citations: Citation[];
 }
 
@@ -123,24 +92,18 @@ export const INTERVENTIONS: Intervention[] = [
     id: "meditation",
     name: "Meditation & Contemplative Practice",
     category: "meditation",
-    description: "Systematic mental training involving focused attention, open monitoring, or cultivation of specific mental states through sustained practice.",
-    mechanism: "Voluntary attentional control creates repeated activation patterns that strengthen specific neural pathways through neuroplasticity. Frontal-parietal networks show enhanced connectivity, while default mode network activity decreases during practice.",
+    description: "Structured mental training, such as focused attention on one object or open monitoring of whatever arises.",
     frequencyEffects: [
-      { band: "alpha", change: "increase", magnitude: "large", region: "parieto-occipital" },
-      { band: "theta", change: "increase", magnitude: "large", region: "frontal-midline" },
-      { band: "gamma", change: "increase", magnitude: "large", region: "whole-brain" },
-      { band: "beta", change: "decrease", magnitude: "medium", region: "frontal" }
+      { band: "gamma", change: "increase", source: 2 }
     ],
     evidence: {
-      quality: "gold",
+      quality: "silver",
       replicationStatus: "replicated"
     },
-    accessibility: "universal",
-    timeInvestment: "20-60 min daily",
     keyFindings: [
-      "All meditation traditions show 60-110 Hz gamma amplitude higher than controls, correlated with experience",
-      "Advanced meditators show high-frequency oscillations (beta/gamma); intermediate show low-frequency (theta/alpha)",
-      "Theta increases with distractions; alpha relates to fewer distractions and deeper states"
+      { text: "Long-term Buddhist practitioners self-induced sustained, high-amplitude gamma-band synchrony during meditation (8 practitioners vs 10 controls).", source: 0 },
+      { text: "Practitioners of three traditions (Vipassana, Himalayan Yoga, Isha Shoonya) showed higher 60-110 Hz gamma than controls, and gamma rose with years of practice.", source: 2 },
+      { text: "A proposed taxonomy links meditation types to EEG bands: focused attention with beta/gamma, open monitoring with theta, automatic self-transcending with alpha.", source: 1 }
     ],
     citations: [
       { text: "Lutz et al. (2004). PNAS 101(46) - Long-term meditators self-induce high-amplitude gamma synchrony during mental practice", url: "https://doi.org/10.1073/pnas.0407401101", status: "verified" },
@@ -152,27 +115,18 @@ export const INTERVENTIONS: Intervention[] = [
     id: "binaural-beats",
     name: "Binaural Beats",
     category: "sound",
-    description: "Two slightly different frequencies presented separately to each ear create a perceived 'beat' at the difference frequency, entraining brainwaves through the Frequency Following Response.",
-    mechanism: "Different frequencies in each ear (e.g., 250 Hz left, 256 Hz right) create 6 Hz perceived beat. This activates the superior olivary complex in brainstem, generating neural oscillations at beat frequency that propagate to cortex via auditory pathways.",
+    description: "Two tones of slightly different frequency, one in each ear, which the brain perceives as a beat at the difference (e.g. 250 Hz and 256 Hz give a 6 Hz beat).",
     frequencyEffects: [
-      { band: "delta", change: "increase", magnitude: "medium" },
-      { band: "theta", change: "increase", magnitude: "large", region: "whole-cortex" },
-      { band: "alpha", change: "increase", magnitude: "medium" },
-      { band: "beta", change: "increase", magnitude: "medium" },
-      { band: "gamma", change: "increase", magnitude: "small" }
+      { band: "theta", change: "increase", source: 0 }
     ],
     evidence: {
-      quality: "silver",
+      quality: "gold",
       replicationStatus: "replicated"
     },
-    accessibility: "universal",
-    timeInvestment: "10-30 min per session",
     keyFindings: [
-      "6 Hz theta binaural beats develop activity across entire cortex within 10 minutes",
-      "Personalized beats based on heart rate (Brain-Body Coupling) show stronger entrainment than fixed frequencies",
-      "Lower frequencies (theta/delta) more effective for relaxation; higher (beta/gamma) for focus",
-      "Effects are immediate but temporary - require repeated exposure for lasting changes",
-      "Can be combined with meditation or used alone for quick state shifts"
+      { text: "A 6 Hz beat on a 250 Hz carrier for 30 minutes induced theta activity across the cortex within 10 minutes (28 participants); the authors suggest it for inducing a meditative state.", source: 0 },
+      { text: "A meta-analysis of 22 studies found a medium overall effect (g = 0.45) on memory, attention, anxiety and pain, varying with beat frequency and exposure timing.", source: 2 },
+      { text: "A review notes that findings are often contradictory, partly because studies use different stimulation parameters.", source: 1 }
     ],
     citations: [
       { text: "Jirakittayakorn & Wongsawat (2017). Frontiers in Neuroscience 11 - Brain responses to a 6-Hz binaural beat", url: "https://doi.org/10.3389/fnins.2017.00365", status: "verified" },
@@ -184,25 +138,18 @@ export const INTERVENTIONS: Intervention[] = [
     id: "tms-tbs",
     name: "Transcranial Magnetic Stimulation (TMS/TBS)",
     category: "electromagnetic",
-    description: "Magnetic pulses induce electrical currents in targeted cortical regions. Theta Burst Stimulation delivers pulses in theta-frequency patterns for enhanced neuroplastic effects.",
-    mechanism: "Rapidly changing magnetic field (up to 3 Tesla) passes through skull and induces electrical current in neurons. TBS mimics endogenous theta rhythms, creating 'naturalistic' stimulation that enhances synaptic plasticity via NMDA receptors and BDNF expression.",
+    description: "A magnetic coil over the scalp induces current in the cortex beneath it. Theta-burst stimulation delivers pulses in short bursts, so a session takes minutes instead of over half an hour.",
     frequencyEffects: [
-      { band: "theta", change: "increase", magnitude: "large", region: "targeted" },
-      { band: "alpha", change: "modulate", magnitude: "large", region: "occipital" },
-      { band: "beta", change: "modulate", magnitude: "medium" },
-      { band: "gamma", change: "increase", magnitude: "medium" }
+      { band: "alpha", change: "increase", source: 2 }
     ],
     evidence: {
       quality: "gold",
       replicationStatus: "replicated"
     },
-    accessibility: "clinical",
-    timeInvestment: "Daily sessions, 2-6 weeks",
     keyFindings: [
-      "Theta burst patterns enhance frontal theta oscillations and create positive emotional shifts",
-      "Rhythmic TMS at 10 Hz entrains alpha oscillations with progressive enhancement over time",
-      "Connectivity-guided TBS (targeting specific networks) shows 26-week sustained effects",
-      "'Closed-loop' stimulation adjusting to real-time brain state shows enhanced efficacy"
+      { text: "A 3-minute theta-burst session (iTBS) was non-inferior to the standard 37.5-minute 10 Hz rTMS for treatment-resistant depression in 414 patients.", source: 0 },
+      { text: "An accelerated, connectivity-guided iTBS protocol (SNT) outperformed sham in a small double-blind trial (14 active vs 15 sham); the authors say its durability still needs testing.", source: 1 },
+      { text: "TMS bursts tuned to a person's own alpha frequency induced alpha oscillations in the targeted parietal region: direct evidence of entrainment.", source: 2 }
     ],
     citations: [
       { text: "Blumberger et al. (2018). Lancet 391 - Theta burst vs high-frequency rTMS in depression (THREE-D): a randomised non-inferiority trial", url: "https://doi.org/10.1016/S0140-6736(18)30295-2", status: "verified" },
@@ -214,26 +161,19 @@ export const INTERVENTIONS: Intervention[] = [
     id: "vns",
     name: "Vagus Nerve Stimulation (VNS)",
     category: "neuromodulation",
-    description: "Electrical stimulation of the vagus nerve modulates brainstem nuclei (locus coeruleus, raphe nuclei) which broadcast neuromodulators throughout the brain.",
-    mechanism: "Vagus nerve activation triggers norepinephrine release from locus coeruleus and serotonin from raphe nuclei. This creates global neuromodulation affecting cortical excitability, synaptic plasticity, and network oscillations. Layer-specific effects enhance theta in deep layers, gamma in superficial layers.",
+    description: "Electrical stimulation of the vagus nerve, either by an implanted device or through the skin of the outer ear (transcutaneous).",
     frequencyEffects: [
-      { band: "delta", change: "decrease", magnitude: "medium" },
-      { band: "theta", change: "modulate", magnitude: "large" },
-      { band: "beta", change: "decrease", magnitude: "medium" },
-      { band: "gamma", change: "increase", magnitude: "large", region: "superficial-cortex" }
+      { band: "delta", change: "modulate", source: 0 },
+      { band: "beta", change: "modulate", source: 0 }
     ],
     evidence: {
-      quality: "gold",
+      quality: "silver",
       replicationStatus: "replicated"
     },
-    accessibility: "clinical",
-    timeInvestment: "Surgical implant (invasive) or daily sessions (taVNS)",
     keyFindings: [
-      "VNS causes dose-dependent EEG desynchronization in delta, theta, and beta bands",
-      "Responders show significantly lower phase synchronization during stimulation",
-      "Layer-specific effects: enhances theta in deep brain layers, improves gamma in superficial layers",
-      "Transcutaneous auricular VNS (taVNS) modulates alpha/beta in attention and working memory regions",
-      "Non-invasive taVNS offers similar benefits to implanted VNS for many applications"
+      { text: "In 28 patients with drug-resistant epilepsy, raising VNS intensity changed EEG power, mainly in the delta and beta bands.", source: 0 },
+      { text: "In rats, VNS paired with motor training reorganized motor-cortex maps; blocking alpha-2 noradrenergic receptors prevented it.", source: 1 },
+      { text: "Short-term transcutaneous auricular VNS reconfigured large-scale EEG brain networks in 30 subjects.", source: 2 }
     ],
     citations: [
       { text: "(2024). Biomedicines 12(3) - Characterization of vagus nerve stimulation dose-dependent effects on EEG power spectrum and synchronization", url: "https://doi.org/10.3390/biomedicines12030557", status: "verified", note: "Replaces a citation that could not be found (Assenza 2017)." },
@@ -245,23 +185,21 @@ export const INTERVENTIONS: Intervention[] = [
     id: "photobiomodulation",
     name: "Transcranial Photobiomodulation (tPBM)",
     category: "electromagnetic",
-    description: "Near-infrared light (600-1300 nm) penetrates the skull and modulates mitochondrial function, enhancing ATP production and reducing oxidative stress. Pulsing at specific frequencies entrains neural oscillations.",
-    mechanism: "Photons absorbed by cytochrome c oxidase (Complex IV) in mitochondria increase ATP production, enhance cerebral blood flow, reduce inflammation, and promote neurogenesis. When pulsed at 40 Hz (gamma frequency), creates strong neural entrainment.",
+    description: "Red or near-infrared light applied to the head, sometimes pulsed at a set frequency such as 40 Hz.",
     frequencyEffects: [
-      { band: "alpha", change: "increase", magnitude: "medium" },
-      { band: "beta", change: "increase", magnitude: "medium" },
-      { band: "gamma", change: "increase", magnitude: "large" }
+      { band: "delta", change: "decrease", source: 0 },
+      { band: "theta", change: "decrease", source: 0 },
+      { band: "alpha", change: "increase", source: 0 },
+      { band: "beta", change: "increase", source: 0 },
+      { band: "gamma", change: "increase", source: 0 }
     ],
     evidence: {
-      quality: "silver",
+      quality: "bronze",
       replicationStatus: "emerging"
     },
-    accessibility: "consumer",
-    timeInvestment: "10-20 min per session",
     keyFindings: [
-      "810 nm pulsed at 40 Hz significantly increases power across ALL frequency bands",
-      "Reduces oxidative stress, increases cerebral blood flow, enhances neurogenesis and synaptogenesis",
-      "NIR-TPBM changes spectral brain activity in alpha/beta ranges and improves visual function"
+      { text: "One session of 810 nm light pulsed at 40 Hz increased alpha, beta and gamma power and reduced delta and theta at rest, compared with sham (pilot study).", source: 0 },
+      { text: "The most studied proposed mechanism is improved mitochondrial function.", source: 0 }
     ],
     citations: [
       { text: "Zomorrodi et al. (2019). Scientific Reports 9 - Pulsed near-infrared transcranial and intranasal photobiomodulation significantly modulates neural oscillations: a pilot exploratory study", url: "https://doi.org/10.1038/s41598-019-42693-x", status: "verified", note: "Journal and title corrected (was listed as NeuroImage). A pilot study." },
@@ -272,28 +210,22 @@ export const INTERVENTIONS: Intervention[] = [
     id: "psychedelics",
     name: "Psychedelics (LSD, Psilocybin, DMT)",
     category: "pharmacological",
-    description: "5-HT2A receptor agonists that profoundly alter consciousness by disrupting normal brain network organization and enhancing neuroplasticity.",
-    mechanism: "5-HT2A receptor activation in cortical pyramidal neurons disrupts thalamo-cortical alpha oscillations, increases neural signal diversity, and enhances glutamatergic transmission. This creates 'flattened' hierarchy allowing bottom-up sensory information to overwhelm top-down predictions.",
+    description: "Drugs such as LSD, psilocybin and DMT that act mainly on serotonin 2A receptors and strongly alter perception and consciousness.",
     frequencyEffects: [
-      { band: "delta", change: "increase", magnitude: "large" },
-      { band: "theta", change: "increase", magnitude: "large" },
-      { band: "alpha", change: "decrease", magnitude: "large", region: "occipital" },
-      { band: "beta", change: "decrease", magnitude: "medium" },
-      { band: "gamma", change: "modulate", magnitude: "medium" }
+      { band: "alpha", change: "decrease", source: 0 },
+      { band: "beta", change: "decrease", source: 1 },
+      { band: "delta", change: "increase", source: 1 },
+      { band: "theta", change: "increase", source: 1 }
     ],
     evidence: {
-      quality: "gold",
+      quality: "silver",
       replicationStatus: "replicated"
     },
-    accessibility: "restricted",
-    timeInvestment: "Single sessions with integration",
     keyFindings: [
-      "Consistently reduce alpha (8-13 Hz) in occipital regions while increasing delta/theta - 'waking-dream' state",
-      "DMT rapidly increases signal diversity - measure of novel, complex neural activity",
-      "Lower baseline theta predicts MORE intense mystical experiences during DMT",
-      "5-MeO-DMT induces dissociated state: global slow-wave activity with behavioral wakefulness",
-      "Psychedelics create rapid neuroplastic changes; effects opposite to meditation (disrupt vs enhance coherence) but both therapeutic",
-      "CRITICAL: Requires screening, set/setting, and integration support for safety and efficacy"
+      { text: "LSD decreased visual-cortex alpha power, and the decrease correlated with ratings of visual hallucinations.", source: 0 },
+      { text: "DMT reduced alpha and beta power and robustly increased signal diversity; delta and theta activity emerged at the peak of the experience.", source: 1 },
+      { text: "A systematic review found psychedelics induce molecular and cellular changes related to neuroplasticity after single or repeated doses.", source: 2 },
+      { text: "Mental state (set) and environment (setting) are significant predictors of psychedelic effects.", source: 2 }
     ],
     citations: [
       { text: "Carhart-Harris et al. (2016). PNAS 113(17) - Neural correlates of the LSD experience revealed by multimodal neuroimaging", url: "https://doi.org/10.1073/pnas.1518377113", status: "verified" },
@@ -305,26 +237,16 @@ export const INTERVENTIONS: Intervention[] = [
     id: "neurofeedback",
     name: "Neurofeedback Training",
     category: "neuromodulation",
-    description: "Real-time EEG feedback enables operant conditioning of specific brainwave patterns. Rewards are given when target frequencies increase/decrease, creating learned self-regulation.",
-    mechanism: "Operant conditioning of neural oscillations. Visual/auditory feedback rewards desired brainwave patterns, strengthening those patterns through repetition and reward-based learning. Creates lasting changes via neuroplasticity and procedural learning.",
-    frequencyEffects: [
-      { band: "delta", change: "modulate", magnitude: "large" },
-      { band: "theta", change: "modulate", magnitude: "large" },
-      { band: "alpha", change: "modulate", magnitude: "large" },
-      { band: "beta", change: "modulate", magnitude: "large" },
-      { band: "gamma", change: "modulate", magnitude: "medium" }
-    ],
+    description: "Training in which a person sees or hears their own EEG in real time and learns to shift it toward a target pattern.",
+    frequencyEffects: [],
     evidence: {
-      quality: "gold",
+      quality: "silver",
       replicationStatus: "replicated"
     },
-    accessibility: "clinical",
-    timeInvestment: "20-40 sessions, 30-45 min each",
     keyFindings: [
-      "QEEG brain mapping enables personalized protocols targeting specific patterns",
-      "Alpha enhancement training reduces anxiety with effects lasting 6+ months",
-      "Infra-low frequency neurofeedback (ILF-NFT) shows promise in double-blind trials",
-      "Coherence training (synchronization between regions) particularly effective for peak performance"
+      { text: "In ADHD, standard protocols (theta/beta, SMR, slow cortical potentials) are well investigated and have shown specificity.", source: 0 },
+      { text: "A 2005 review found particularly positive research support for neurofeedback in anxiety disorders.", source: 1 },
+      { text: "In healthy people, reviews report gains in attention and in creative performance, alongside unresolved methodological problems.", source: 2 }
     ],
     citations: [
       { text: "Arns, Heinrich & Strehl (2014). Biological Psychology 95 - Evaluation of neurofeedback in ADHD: the long and winding road", url: "https://doi.org/10.1016/j.biopsycho.2013.11.013", status: "verified", note: "Journal corrected (was listed as Clinical EEG & Neuroscience)." },
@@ -336,24 +258,16 @@ export const INTERVENTIONS: Intervention[] = [
     id: "heart-coherence",
     name: "Heart Coherence Training",
     category: "physiological",
-    description: "Techniques to create ordered, coherent heart rhythm patterns which entrain other physiological systems including brain rhythms. Typically uses slow, rhythmic breathing and positive emotion cultivation.",
-    mechanism: "Heart's electromagnetic field is 60x stronger than brain's. Coherent heart rhythms (smooth, sine-wave-like HRV pattern at ~0.1 Hz) entrain neural oscillations, synchronize ANS branches, and create system-wide coherence. Positive emotions (appreciation, compassion) naturally create heart coherence.",
-    frequencyEffects: [
-      { band: "alpha", change: "increase", magnitude: "large" },
-      { band: "theta", change: "increase", magnitude: "medium" },
-      { band: "gamma", change: "increase", magnitude: "small" }
-    ],
+    description: "Slow, paced breathing combined with deliberate positive emotion, aimed at producing a smooth, regular heart-rate rhythm (about 0.1 Hz).",
+    frequencyEffects: [],
     evidence: {
-      quality: "silver",
+      quality: "preliminary",
       replicationStatus: "replicated"
     },
-    accessibility: "universal",
-    timeInvestment: "5-15 min, 2-3x daily",
     keyFindings: [
-      "During coherence: ANS branches synchronize, multiple systems entrain to heart rhythm, heart-brain synchronization increases dramatically",
-      "Global study shows oscillatory coupling between neural and cardiac rhythms - heart modulates brain alpha",
-      "Positive emotions (appreciation, compassion, love) naturally create coherent heart rhythms",
-      "Can be learned in single session; benefits immediate but deepen with practice"
+      { text: "HeartMath researchers propose that self-induced positive emotions produce a 'coherent' state in which heart rhythm and other physiological systems synchronize. This is a theory from its proponents.", source: 1 },
+      { text: "The same group's monograph presents coherence as an optimal psychophysiological state linked to well-being and cognitive performance.", source: 0 },
+      { text: "Reduced heart rate variability is associated with risk of disease and mortality; a healthy heart's rhythm is complex, not metronomic.", source: 2 }
     ],
     citations: [
       { text: "McCraty et al. (2009). Integral Review 5(2) - The coherent heart: heart-brain interactions, psychophysiological coherence, and the emergence of system-wide order", url: "https://integral-review.org/the-coherent-heart-heart-brain-interactions-psychophysiological-coherence-and-the-emergence-of-system-wide-order/", status: "verified", note: "Journal corrected (was listed as International Journal of Psychophysiology). Published by the HeartMath Institute's researchers." },
@@ -365,23 +279,17 @@ export const INTERVENTIONS: Intervention[] = [
     id: "schumann",
     name: "Schumann Resonance (7.83 Hz)",
     category: "electromagnetic",
-    description: "Earth's fundamental electromagnetic resonance, created by lightning strikes in the Earth-ionosphere cavity. Overlaps with human theta-alpha boundary, suggesting evolutionary adaptation.",
-    mechanism: "7.83 Hz electromagnetic field entrains neural oscillations through direct electromagnetic coupling. Human nervous systems evolved within this field over millions of years, creating resonance sensitivity. Affects circadian rhythms, hormonal secretion, and autonomic balance.",
-    frequencyEffects: [
-      { band: "theta", change: "increase", magnitude: "medium" },
-      { band: "alpha", change: "increase", magnitude: "medium" }
-    ],
+    description: "The Earth's electromagnetic resonance between the ground and the ionosphere, excited by lightning, with a fundamental near 7.83 Hz.",
+    frequencyEffects: [],
     evidence: {
-      quality: "bronze",
+      quality: "preliminary",
       replicationStatus: "emerging"
     },
-    accessibility: "consumer",
-    timeInvestment: "Passive exposure, 30-60 min",
     keyFindings: [
-      "EEG variations correlate with Schumann resonance changes across daily cycle",
-      "Randomized double-blind study: Schumann treatment improved sleep onset latency and total sleep time in insomnia",
-      "Effects on circadian rhythms, blood pressure, hormonal secretion documented",
-      "Research quality is lower than other interventions - more rigorous studies needed"
+      { text: "A 2002 hypothesis paper proposed Schumann resonance as the mechanism linking solar activity to human health, mainly via melatonin.", source: 0 },
+      { text: "A small study reported real-time coherence between Schumann resonance and EEG in the 6-16 Hz band (primary record not located).", source: 1 },
+      { text: "In rats with induced epilepsy, higher geomagnetic activity was associated with higher mortality. This is not a human study.", source: 2 },
+      { text: "Author's note: research quality here is far below the other interventions; no finding above shows a health effect in people.", source: null }
     ],
     citations: [
       { text: "Cherry (2002). Natural Hazards 26(3) - Schumann resonances, a plausible biophysical mechanism for the human health effects of solar/geomagnetic activity", url: "https://doi.org/10.1023/A:1015637127504", status: "verified", note: "Journal corrected (was listed as Medical Hypotheses)." },
@@ -393,25 +301,16 @@ export const INTERVENTIONS: Intervention[] = [
     id: "solfeggio",
     name: "Solfeggio Frequencies (528 Hz, 432 Hz)",
     category: "sound",
-    description: "Specific sound frequencies claimed to have special healing or consciousness-enhancing properties. Most commonly cited: 528 Hz ('Love frequency') and 432 Hz ('Natural tuning').",
-    mechanism: "Proposed mechanisms include sympathetic resonance with cellular structures, harmonic relationships to natural phenomena, and psychological effects of harmonic complexity. Scientific evidence is limited and mechanisms remain speculative.",
-    frequencyEffects: [
-      { band: "alpha", change: "increase", magnitude: "small" },
-      { band: "theta", change: "increase", magnitude: "small" }
-    ],
+    description: "Music retuned to particular frequencies, mainly 528 Hz and A = 432 Hz, that are promoted online as having healing properties.",
+    frequencyEffects: [],
     evidence: {
       quality: "bronze",
       replicationStatus: "preliminary"
     },
-    accessibility: "universal",
-    timeInvestment: "15-30 min",
     keyFindings: [
-      "528 Hz music significantly reduced cortisol and increased oxytocin after few minutes",
-      "432 Hz tuning slowed heart rate compared to 440 Hz in double-blind study",
-      "CRITICAL: Many online 'solfeggio' videos are mislabeled marketing - frequency claims often false",
-      "Claims about 'DNA repair' lack rigorous scientific support",
-      "Effects may be due to general relaxation rather than frequency-specific mechanisms",
-      "Requires significantly more rigorous research before strong claims can be made"
+      { text: "In 9 healthy adults, five minutes of 528 Hz music lowered cortisol and raised oxytocin; 440 Hz music did not.", source: 0 },
+      { text: "A small pilot reported a slight drop in heart rate with 432 Hz vs 440 Hz music; the sample was very small and not randomized.", source: 1 },
+      { text: "Author's note: claims about DNA repair or 'healing frequencies' lack rigorous support, and these two pilots cannot separate frequency effects from general relaxation.", source: null }
     ],
     citations: [
       { text: "Akimoto et al. (2018). Health 10 - Effect of 528 Hz music on the endocrine system and autonomic nervous system (9 participants)", url: "https://doi.org/10.4236/health.2018.109088", status: "verified" },
@@ -430,4 +329,16 @@ export const SOURCE_AUDIT = {
   notFound: 7,
   unconfirmed: 1,
   replacedWithRealSources: 4
+};
+
+// Results of matching the draft's 44 findings to their sources.
+export const FINDING_AUDIT = {
+  drafted: 44,
+  supportedAsWritten: 4,
+  rewordedToMatchSource: 17,
+  contradictedBySource: 2,
+  replaced: 1,
+  removedNoSource: 16,
+  keptAsAuthorNotes: 4,
+  addedFromSources: 6
 };
