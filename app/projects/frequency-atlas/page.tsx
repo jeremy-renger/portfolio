@@ -63,7 +63,7 @@ export default function FrequencyAtlasPage() {
           <article className="detail-panel">
             <h2 className="section-title" style={{ marginTop: 0 }}>Data model</h2>
             <ul className="detail-list">
-              <li><strong>Intervention:</strong> category, mechanism, per-band effects, evidence, citations.</li>
+              <li><strong>Intervention:</strong> category, sourced findings, per-band changes, evidence grade, citations.</li>
               <li><strong>Evidence:</strong> a four-level strength grade plus, for every source, an audit status and a link to the record.</li>
               <li><strong>Bands:</strong> delta, theta, alpha, beta and gamma as stable comparison anchors.</li>
             </ul>
@@ -86,9 +86,12 @@ export default function FrequencyAtlasPage() {
             <li><strong>Fixed:</strong> {A.realButWrongDetails} citations pointed at real papers with the wrong journal, title or year. One &quot;human mortality&quot; source was really a study in rats.</li>
             <li><strong>Replaced or removed:</strong> {A.notFound} could not be found. {A.replacedWithRealSources} were replaced by real studies that support the same point; the rest were removed with the findings they backed, including one that a real trial contradicts.</li>
             <li><strong>Also removed:</strong> the draft&apos;s study counts, participant numbers, effect sizes, safety ratings and clinical-outcome scores, none of which had a source.</li>
-            <li><strong>Findings:</strong> of the draft&apos;s {F.drafted} findings, only {F.supportedAsWritten} matched their source as written. {F.rewordedToMatchSource} were reworded to say what the source actually says, {F.contradictedBySource} were contradicted by their own source and corrected, and {F.removedNoSource} had no support and were removed.</li>
+            <li><strong>Findings:</strong> of the draft&apos;s {F.drafted} findings, only {F.supportedAsWritten} matched their source as written. {F.rewordedToMatchSource} were reworded to say what the source actually says, {F.contradictedBySource} were contradicted by their own source and corrected, and {F.removedNoSource + F.removedEarlier} were removed ({F.removedNoSource} with no support in any cited source, {F.removedEarlier} earlier as overstated or backed by references that do not exist). The draft&apos;s {F.inventedProtocolsRemoved} &ldquo;combination protocols&rdquo; with invented synergy numbers were removed too.</li>
             <li><strong>Now:</strong> {verified} of {sources.length} sources verified and linked; every finding and every band change points to its source; grades follow one stated rule.</li>
           </ul>
+          <div className="actions">
+            <a href="/papers/Renger_2026_Frequency_Atlas_Source_Audit.pdf" className="btn btn-primary" target="_blank" rel="noreferrer">Read the audit paper (PDF)</a>
+          </div>
         </section>
 
         <section className="detail-panel reveal reveal-delay-1" id="visualizer">

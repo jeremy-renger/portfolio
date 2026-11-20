@@ -331,9 +331,14 @@ export const SOURCE_AUDIT = {
   replacedWithRealSources: 4
 };
 
-// Results of matching the draft's 44 findings to their sources.
+// Results of matching the draft's 56 findings to their sources.
+// 12 were removed before the per-source check (10 in an earlier editorial pass,
+// 2 whose references did not exist); the other 44 were checked one by one.
+// The draft also held 4 invented "combination protocols", all removed.
 export const FINDING_AUDIT = {
-  drafted: 44,
+  drafted: 56,
+  removedEarlier: 12,
+  inventedProtocolsRemoved: 4,
   supportedAsWritten: 4,
   rewordedToMatchSource: 17,
   contradictedBySource: 2,

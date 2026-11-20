@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import PortfolioHeader from '../../components/portfolio-header';
 import summary from '../../lib/spotify-summary.json';
+import { FINDING_AUDIT as F, SOURCE_AUDIT as A } from '../../lib/frequency-atlas-data';
 
 export const metadata: Metadata = {
   title: 'Writing | Jeremy Renger',
@@ -35,6 +36,25 @@ export default function WritingPage() {
             <a href="/papers/Renger_2026_Songs_vs_Genre.pdf" className="btn btn-primary" target="_blank" rel="noreferrer">Read the PDF</a>
             <Link href="/projects/spotify-audio-universe" className="btn">Explore the interactive map</Link>
             <a href="https://github.com/jeremy-renger/portfolio/tree/main/scripts" className="btn" target="_blank" rel="noreferrer">Code to reproduce it</a>
+          </div>
+        </article>
+        <article className="detail-panel reveal paper-card">
+          <p className="hero-subtitle">Paper · November 2026 · 7 pages</p>
+          <h1 className="section-title" style={{ marginTop: 0 }}>
+            Auditing an AI-Drafted Research Atlas: {A.checked} References, {F.drafted} Findings
+          </h1>
+          <p className="hero-copy" style={{ maxWidth: 'none' }}>
+            Before publishing Frequency Atlas I checked every reference and every finding in its AI-written first draft.
+            Most did not survive. This paper reports what failed, the patterns behind it, and a checklist for AI-assisted research.
+          </p>
+          <ul className="detail-list">
+            <li><strong>{A.correctAsWritten} of {A.checked}</strong> references were correct as written; {A.notFound} could not be found at all.</li>
+            <li><strong>{F.supportedAsWritten} of {F.drafted}</strong> findings were supported by their source as written.</li>
+            <li><strong>Real authors, wrong journals:</strong> 9 of the {A.realButWrongDetails} miscited references had the right author and year, so a quick search seemed to confirm them.</li>
+          </ul>
+          <div className="actions">
+            <a href="/papers/Renger_2026_Frequency_Atlas_Source_Audit.pdf" className="btn btn-primary" target="_blank" rel="noreferrer">Read the PDF</a>
+            <Link href="/projects/frequency-atlas" className="btn">See the audited atlas</Link>
           </div>
         </article>
       </main>
