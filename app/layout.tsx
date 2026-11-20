@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Bebas_Neue, Work_Sans } from 'next/font/google';
+import { SITE } from '../lib/site';
+import summary from '../lib/spotify-summary.json';
 import './globals.css';
 
 const bebas = Bebas_Neue({
@@ -14,9 +16,21 @@ const workSans = Work_Sans({
   variable: '--font-work'
 });
 
+const description =
+  `Software engineer building interfaces for dense technical data: a real-data UMAP/t-SNE map of ${summary.count.toLocaleString('en-US')} songs and an evidence-first research atlas.`;
+
 export const metadata: Metadata = {
-  title: 'Jeremy Renger | Portfolio',
-  description: 'Interactive data visualization and research systems portfolio featuring Spotify Audio Universe and Frequency Atlas.'
+  metadataBase: new URL(SITE.url),
+  title: `${SITE.name} | Software engineer`,
+  description,
+  openGraph: {
+    type: 'website',
+    url: '/',
+    siteName: SITE.name,
+    title: `${SITE.name} | Software engineer`,
+    description
+  },
+  twitter: { card: 'summary_large_image', title: `${SITE.name} | Software engineer`, description }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

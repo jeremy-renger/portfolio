@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import {
-  COMBINATION_PROTOCOLS,
   FREQUENCY_BANDS,
   INTERVENTIONS,
   type Intervention
@@ -19,6 +18,18 @@ const categories: { value: Category; label: string }[] = [
   { value: 'pharmacological', label: 'Pharmacological' },
   { value: 'physiological', label: 'Physiological' }
 ];
+
+// The author's own grading of each evidence base, from study count, design and
+// replication. Not a formal GRADE assessment.
+const EVIDENCE: Record<Intervention['evidence']['quality'], { label: string; rank: number; className: string }> = {
+  gold: { label: 'Strong', rank: 0, className: 'ev-strong' },
+  silver: { label: 'Moderate', rank: 1, className: 'ev-moderate' },
+  bronze: { label: 'Limited', rank: 2, className: 'ev-limited' },
+  preliminary: { label: 'Preliminary', rank: 3, className: 'ev-prelim' }
+};
+
+const byEvidence = (a: Intervention, b: Intervention) =>
+  EVIDENCE[a.evidence.quality].rank - EVIDENCE[b.evidence.quality].rank || b.evidence.studyCount - a.evidence.studyCount;
 
 function effectToAfter(change: string, magnitude: string) {
   const map: Record<string, number> = { small: 12, medium: 22, large: 34 };
@@ -43,8 +54,10 @@ export default function FrequencyAtlasVisualizer() {
         item.description.toLowerCase().includes(q) ||
         item.keyFindings.some((k) => k.toLowerCase().includes(q));
       return byCategory && byQuery;
-    });
+    }).sort(byEvidence);
   }, [query, category]);
+
+  const maxStudies = useMemo(() => Math.max(...INTERVENTIONS.map((i) => i.evidence.studyCount)), []);
 
   const selected = useMemo(() => {
     return INTERVENTIONS.find((item) => item.id === selectedId) ?? filtered[0] ?? INTERVENTIONS[0] ?? null;
@@ -100,7 +113,10 @@ export default function FrequencyAtlasVisualizer() {
               onClick={() => setSelectedId(item.id)}
             >
               <strong>{item.name}</strong>
-              <span>{item.evidence.studyCount} studies • d={item.evidence.effectSize.toFixed(2)}</span>
+              <span>
+                <em className={`ev-badge ${EVIDENCE[item.evidence.quality].className}`}>{EVIDENCE[item.evidence.quality].label}</em>{' '}
+                {item.evidence.studyCount} studies
+              </span>
               <small>{item.category}</small>
             </button>
           ))}
@@ -115,11 +131,14 @@ export default function FrequencyAtlasVisualizer() {
               <p>{selected.description}</p>
 
               <div className="atlas-meta">
-                <span>Evidence: {selected.evidence.quality}</span>
-                <span>Participants: {selected.evidence.participants.toLocaleString()}</span>
-                <span>Time: {selected.timeInvestment}</span>
-                <span>Safety: {selected.safety}</span>
+                <span className={`ev-badge ${EVIDENCE[selected.evidence.quality].className}`}>
+                  {EVIDENCE[selected.evidence.quality].label} evidence
+                </span>
+                <span>{selected.evidence.studyCount} studies · {selected.evidence.participants.toLocaleString()} participants</span>
+                <span>Replication: {selected.evidence.replicationStatus}</span>
+                <span>Pooled d ≈ {selected.evidence.effectSize.toFixed(1)}</span>
               </div>
+              <p className="atlas-caption">Reported direction of change per band. Bar lengths are illustrative, not measured magnitudes.</p>
 
               <div className="atlas-bands">
                 {bandRows.map((band) => (
@@ -144,10 +163,17 @@ export default function FrequencyAtlasVisualizer() {
               </div>
 
               <div className="atlas-findings">
-                <h4>Key Findings</h4>
+                <h4>Reported findings</h4>
+                <p className="atlas-caption">Summarised from the sources below; not independently verified.</p>
                 <ul>
                   {selected.keyFindings.slice(0, 5).map((finding) => (
                     <li key={finding}>{finding}</li>
+                  ))}
+                </ul>
+                <h4>Sources</h4>
+                <ul className="atlas-sources">
+                  {selected.citations.map((c) => (
+                    <li key={c}>{c}</li>
                   ))}
                 </ul>
               </div>
@@ -156,16 +182,26 @@ export default function FrequencyAtlasVisualizer() {
         </section>
       </div>
 
-      <section className="atlas-protocols">
-        <h4>Combination Protocols</h4>
-        <div className="atlas-protocol-grid">
-          {COMBINATION_PROTOCOLS.map((protocol) => (
-            <article key={protocol.name} className="atlas-protocol-card">
-              <strong>{protocol.name}</strong>
-              <p>{protocol.description}</p>
-              <p className="atlas-protocol-line">{protocol.protocol}</p>
-              <span>Synergy: {protocol.synergy.toFixed(2)}x</span>
-            </article>
+      <section className="atlas-protocols" aria-label="Evidence overview">
+        <h4>Evidence overview</h4>
+        <p className="atlas-caption">Studies per intervention, coloured by evidence strength. More studies is not the same as better evidence.</p>
+        <div className="ev-overview">
+          {[...INTERVENTIONS].sort(byEvidence).map((item) => (
+            <button key={item.id} type="button" className="ev-row" onClick={() => setSelectedId(item.id)}>
+              <span className="ev-row-name">{item.name}</span>
+              <span className="ev-row-track">
+                <span
+                  className={`ev-row-bar ${EVIDENCE[item.evidence.quality].className}`}
+                  style={{ width: `${(item.evidence.studyCount / maxStudies) * 100}%` }}
+                />
+              </span>
+              <span className="ev-row-n">{item.evidence.studyCount}</span>
+            </button>
+          ))}
+        </div>
+        <div className="ev-legend">
+          {Object.values(EVIDENCE).map((e) => (
+            <span key={e.label}><i className={`ev-dot ${e.className}`} /> {e.label}</span>
           ))}
         </div>
       </section>

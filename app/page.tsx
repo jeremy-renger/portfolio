@@ -1,5 +1,11 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import PortfolioHeader from '../components/portfolio-header';
+import { SITE } from '../lib/site';
+import summary from '../lib/spotify-summary.json';
+
+const songs = summary.count.toLocaleString('en-US');
+const overall = Math.round(summary.purity.overall * 100);
 
 export default function HomePage() {
   return (
@@ -9,111 +15,106 @@ export default function HomePage() {
       <main className="main">
         <section className="hero reveal home-hero">
           <div className="home-hero-copy">
-            <p className="hero-subtitle">Software engineer • interactive systems • data visualization</p>
-            <h1 className="hero-title">I build product-grade interfaces for dense, technical information.</h1>
+            <p className="hero-subtitle">Software engineer · data visualization · interactive systems</p>
+            <h1 className="hero-title">I build interfaces that make dense technical data readable.</h1>
             <p className="hero-copy">
-              This portfolio pairs a browser-native audio visualization system with a research atlas for intervention
-              studies. Together they show interface design, frontend implementation, and technical communication in one
-              concise employer-facing surface.
+              Two case studies: a real-data map of {songs} songs built with UMAP and t-SNE, and a research atlas
+              designed so that weak evidence looks weak. Each one covers the data pipeline, the interaction design
+              and the front end.
             </p>
             <div className="actions">
-              <Link href="/projects/spotify-audio-universe" className="btn btn-primary">View Flagship Project</Link>
-              <Link href="/projects/frequency-atlas" className="btn">Open Research Case Study</Link>
-            </div>
-            <div className="hero-signal-strip">
-              <div className="signal-chip">
-                <span className="signal-chip-label">Primary signal</span>
-                <span className="signal-chip-value">Product thinking + frontend execution</span>
-              </div>
-              <div className="signal-chip">
-                <span className="signal-chip-label">Interaction focus</span>
-                <span className="signal-chip-value">Explorable data, not static dashboards</span>
-              </div>
+              <Link href="/projects/spotify-audio-universe" className="btn btn-primary">Explore the song map</Link>
+              <Link href="/projects/frequency-atlas" className="btn">See the research atlas</Link>
             </div>
           </div>
           <article className="home-feature-card">
             <div className="home-hero-stage">
               <div className="stage-panel stage-panel-primary">
                 <span className="stage-kicker">Spotify Audio Universe</span>
-                <strong className="stage-title">25K-track feature space</strong>
-                <span className="stage-metric">UMAP • t-SNE • live genre filtering</span>
+                <strong className="stage-title">{songs} real songs</strong>
+                <span className="stage-metric">UMAP ↔ t-SNE morph · search · neighbours</span>
               </div>
               <div className="stage-panel stage-panel-secondary">
                 <span className="stage-kicker">Frequency Atlas</span>
-                <strong className="stage-title">150+ mapped interventions</strong>
-                <span className="stage-metric">Evidence modeling • comparison views</span>
+                <strong className="stage-title">Evidence-first design</strong>
+                <span className="stage-metric">10 interventions · 31 cited sources</span>
               </div>
             </div>
-            <figcaption className="home-feature-caption">Two case studies. One sharp, readable technical portfolio.</figcaption>
+            <figcaption className="home-feature-caption">Real data, measured claims, working code.</figcaption>
           </article>
         </section>
 
         <section className="trust-bar reveal reveal-delay-1">
           <div className="trust-item">
             <span className="trust-label">Focus</span>
-            <span className="trust-value">Frontend engineering + data visualization</span>
+            <span className="trust-value">Front-end engineering and data visualization</span>
           </div>
           <div className="trust-item">
-            <span className="trust-label">Primary stack</span>
-            <span className="trust-value">Next.js, TypeScript, React, custom interaction design</span>
+            <span className="trust-label">Stack</span>
+            <span className="trust-value">TypeScript, React, Next.js, canvas · Python, scikit-learn, UMAP</span>
           </div>
           <div className="trust-item">
             <span className="trust-label">Working style</span>
-            <span className="trust-value">Research-led product thinking with fast prototype loops</span>
+            <span className="trust-value">Measure first, then design what the numbers support</span>
           </div>
           <div className="trust-item">
-            <span className="trust-label">GitHub</span>
-            <a href="https://github.com/Jeremy-Renger" target="_blank" rel="noreferrer" className="trust-link">Jeremy-Renger</a>
+            <span className="trust-label">Code</span>
+            <a href={SITE.github} target="_blank" rel="noreferrer" className="trust-link">github.com/Jeremy-Renger</a>
           </div>
         </section>
 
         <section className="project-grid reveal reveal-delay-1">
           <article className="project-card">
-            <div className="project-card-visual project-card-visual-primary" />
+            <Link href="/projects/spotify-audio-universe" className="project-card-shot" aria-label="Open Spotify Audio Universe">
+              <Image src="/projects/spotify-map.jpg" alt={`UMAP map of ${songs} Spotify songs, coloured by genre`} width={1400} height={867} sizes="(max-width: 900px) 100vw, 50vw" priority />
+            </Link>
             <p className="project-card-kicker">Flagship project</p>
             <h2 className="project-card-title">Spotify Audio Universe</h2>
             <p className="project-card-copy">
-              A browser-native visual system that projects a 25,000-track feature space into an explorable interface
-              for cluster analysis, genre filtering, and track-level inspection.
+              {songs} real Spotify songs placed by nine audio features. Switch between UMAP and t-SNE and watch every
+              point move; hover, search, and pin a track to see its nearest neighbours.
             </p>
             <ul className="detail-list compact-list">
-              <li><strong>Problem:</strong> make high-dimensional audio features legible.</li>
-              <li><strong>Method:</strong> UMAP and t-SNE driven interaction flows.</li>
-              <li><strong>Signal:</strong> product design plus implementation depth.</li>
+              <li><strong>Pipeline:</strong> Python, z-scored features, UMAP and t-SNE with fixed seeds.</li>
+              <li><strong>Finding:</strong> only {overall}% of a song&apos;s nearest neighbours share its genre label.</li>
+              <li><strong>Front end:</strong> every song drawn on one canvas, with grid-indexed hover.</li>
             </ul>
-            <p className="project-card-meta">Best read as: a frontend-heavy product prototype with clear analytical value.</p>
             <div className="actions">
-              <Link href="/projects/spotify-audio-universe" className="btn btn-primary">Open Project</Link>
+              <Link href="/projects/spotify-audio-universe" className="btn btn-primary">Open project</Link>
             </div>
           </article>
 
           <article className="project-card">
-            <div className="project-card-visual project-card-visual-secondary" />
-            <p className="project-card-kicker">Research case study</p>
+            <Link href="/projects/frequency-atlas" className="project-card-shot" aria-label="Open Frequency Atlas">
+              <Image src="/projects/atlas-evidence.jpg" alt="Evidence overview: studies per intervention, coloured by evidence strength" width={1299} height={476} sizes="(max-width: 900px) 100vw, 50vw" />
+            </Link>
+            <p className="project-card-kicker">Design study</p>
             <h2 className="project-card-title">Frequency Atlas</h2>
             <p className="project-card-copy">
-              A research interface that organizes intervention studies across frequency bands, evidence levels, and
-              protocol combinations into a navigable atlas.
+              Neuromodulation research ranges from replicated trials to single small studies. This atlas grades and
+              sorts by evidence strength, so the difference is visible at a glance.
             </p>
             <ul className="detail-list compact-list">
-              <li><strong>Problem:</strong> translate dense research into a usable system.</li>
-              <li><strong>Method:</strong> evidence modeling, filtering, and comparative views.</li>
-              <li><strong>Signal:</strong> technical communication through interface design.</li>
+              <li><strong>Problem:</strong> show uncertainty without hiding the content.</li>
+              <li><strong>Method:</strong> a typed data model, an evidence grade on everything, and sources inline.</li>
+              <li><strong>Output:</strong> filterable atlas plus an evidence overview.</li>
             </ul>
-            <p className="project-card-meta">Best read as: a research interface that turns an uneven evidence base into something navigable.</p>
             <div className="actions">
-              <Link href="/projects/frequency-atlas" className="btn">Open Case Study</Link>
+              <Link href="/projects/frequency-atlas" className="btn">Open case study</Link>
             </div>
           </article>
         </section>
 
         <section className="detail-panel reveal reveal-delay-2">
-          <h2 className="section-title" style={{ marginTop: 0 }}>What employers should notice</h2>
-          <ul className="detail-list">
-            <li><strong>System thinking:</strong> both projects translate abstract data models into readable interfaces.</li>
-            <li><strong>Execution:</strong> the work spans UX framing, component architecture, interaction design, and implementation.</li>
-            <li><strong>Communication:</strong> each project explains problem, method, output, and practical value quickly.</li>
-          </ul>
+          <h2 className="section-title" style={{ marginTop: 0 }}>Get in touch</h2>
+          <p className="hero-copy" style={{ maxWidth: 'none' }}>
+            Open to software engineering roles in data visualization, front end, and robotics software.
+          </p>
+          <div className="actions">
+            <a href={SITE.github} className="btn" target="_blank" rel="noreferrer">GitHub</a>
+            {SITE.linkedin ? <a href={SITE.linkedin} className="btn" target="_blank" rel="noreferrer">LinkedIn</a> : null}
+            {SITE.email ? <a href={`mailto:${SITE.email}`} className="btn btn-primary">Email me</a> : null}
+          </div>
         </section>
       </main>
     </div>

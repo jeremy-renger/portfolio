@@ -1,391 +1,419 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-type Track = {
-  id: number;
-  track_name: string;
-  artists: string;
-  track_genre: string;
-  energy: number;
-  valence: number;
-  danceability: number;
-  acousticness: number;
-  speechiness: number;
-  instrumentalness: number;
-  liveness: number;
-  loudness: number;
-  tempo: number;
-  popularity: number;
-};
-
-type Point = [number, number];
-
-type VizData = {
-  tracks: Track[];
-  umap: Point[];
-  tsne: Point[];
-  genres: string[];
-  genreCounts: Record<string, number>;
-};
-
-const genres = [
-  'pop', 'rock', 'hip-hop', 'edm', 'classical', 'jazz', 'metal', 'country',
-  'indie', 'lo-fi', 'r&b', 'soul', 'funk', 'blues', 'reggae', 'punk',
-  'techno', 'house', 'dubstep', 'trap', 'ambient', 'folk', 'latin',
-  'k-pop', 'disco', 'grunge', 'gospel', 'acoustic', 'experimental', 'synthwave'
-] as const;
-
-const genreCenters: Record<string, [number, number]> = {
-  pop: [0.68, 0.74],
-  rock: [0.72, 0.52],
-  'hip-hop': [0.67, 0.58],
-  edm: [0.86, 0.72],
-  classical: [0.22, 0.42],
-  jazz: [0.46, 0.5],
-  metal: [0.9, 0.34],
-  country: [0.53, 0.64],
-  indie: [0.56, 0.58],
-  'lo-fi': [0.31, 0.58],
-  'r&b': [0.61, 0.63],
-  soul: [0.57, 0.57],
-  funk: [0.64, 0.67],
-  blues: [0.43, 0.45],
-  reggae: [0.58, 0.69],
-  punk: [0.88, 0.42],
-  techno: [0.91, 0.62],
-  house: [0.85, 0.7],
-  dubstep: [0.92, 0.36],
-  trap: [0.73, 0.38],
-  ambient: [0.18, 0.5],
-  folk: [0.42, 0.64],
-  latin: [0.71, 0.76],
-  'k-pop': [0.74, 0.79],
-  disco: [0.8, 0.78],
-  grunge: [0.77, 0.31],
-  gospel: [0.5, 0.61],
-  acoustic: [0.36, 0.6],
-  experimental: [0.41, 0.44],
-  synthwave: [0.83, 0.56]
-};
-
-const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
-
-function seededRandom(seed: number) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state * 1664525 + 1013904223) >>> 0;
-    return state / 4294967296;
+// Columnar payload written by scripts/build_spotify_embedding.py.
+type Payload = {
+  source: { name: string; url: string };
+  method: {
+    features: string[];
+    umap: { library: string; n_neighbors: number; min_dist: number; trustworthiness10: number };
+    tsne: { library: string; perplexity: number; trustworthiness10: number };
   };
+  count: number;
+  genres: string[];
+  subgenres: string[];
+  name: string[];
+  artist: string[];
+  genre: number[];
+  subgenre: number[];
+  popularity: number[];
+  energy: number[];
+  valence: number[];
+  danceability: number[];
+  acousticness: number[];
+  tempo: number[];
+  umap: number[];
+  tsne: number[];
+};
+
+type Projection = 'umap' | 'tsne';
+type ColorMode = 'genre' | 'energy' | 'valence' | 'acousticness' | 'popularity';
+
+const GENRE_COLORS = ['#4cc9f0', '#ffb703', '#ff5d8f', '#a78bfa', '#57cc99', '#ff7a45'];
+// Perceptually ordered ramp (dark violet -> teal -> yellow), readable on the dark canvas.
+const RAMP: [number, number, number][] = [
+  [68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]
+];
+const MORPH_MS = 900;
+const CELL = 12; // px, hit-test grid
+
+function rampColor(t: number) {
+  const x = Math.min(0.9999, Math.max(0, t)) * (RAMP.length - 1);
+  const i = Math.floor(x);
+  const f = x - i;
+  const a = RAMP[i];
+  const b = RAMP[i + 1];
+  return `rgb(${Math.round(a[0] + (b[0] - a[0]) * f)},${Math.round(a[1] + (b[1] - a[1]) * f)},${Math.round(a[2] + (b[2] - a[2]) * f)})`;
 }
 
-function generateData(total = 25000): VizData {
-  const rand = seededRandom(24021986);
-  const tracks: Track[] = [];
-  const umap: Point[] = [];
-  const tsne: Point[] = [];
-  const genreCounts: Record<string, number> = {};
-
-  for (let i = 0; i < total; i += 1) {
-    const genre = genres[Math.floor(rand() * genres.length)];
-    const center = genreCenters[genre];
-    const spread = 0.18;
-
-    const energy = clamp(center[0] + (rand() - 0.5) * spread);
-    const valence = clamp(center[1] + (rand() - 0.5) * spread);
-    const danceability = clamp((energy * 0.55 + valence * 0.45) + (rand() - 0.5) * 0.14);
-    const acousticness = clamp((1 - energy) * 0.75 + rand() * 0.2);
-    const speechiness = clamp((genre.includes('hip') || genre.includes('trap') ? 0.23 : 0.06) + rand() * 0.22);
-    const instrumentalness = clamp((genre === 'classical' || genre === 'ambient' || genre === 'lo-fi' ? 0.52 : 0.16) + rand() * 0.32);
-    const liveness = clamp(0.08 + rand() * 0.35);
-    const tempo = 78 + energy * 104 + (rand() - 0.5) * 10;
-    const loudness = -17 + energy * 14 + (rand() - 0.5) * 2;
-    const popularity = Math.round(clamp(0.2 + valence * 0.4 + danceability * 0.4 + (rand() - 0.5) * 0.25) * 100);
-
-    tracks.push({
-      id: i,
-      track_name: `Track ${i + 1}`,
-      artists: `Artist ${Math.floor(i / 18) + 1}`,
-      track_genre: genre,
-      energy,
-      valence,
-      danceability,
-      acousticness,
-      speechiness,
-      instrumentalness,
-      liveness,
-      loudness,
-      tempo,
-      popularity
-    });
-
-    const theta = ((i / total) * Math.PI * 2) + rand() * 0.24;
-    const radius = 8 + energy * 6 + (rand() - 0.5) * 2.2;
-    umap.push([
-      Math.cos(theta) * radius + (energy - 0.5) * 18,
-      Math.sin(theta) * radius + (valence - 0.5) * 18
-    ]);
-
-    const tsneRadius = 4 + (1 - acousticness) * 10;
-    tsne.push([
-      (energy - 0.5) * 22 + (rand() - 0.5) * 2 + Math.cos(theta * 1.8) * tsneRadius,
-      (valence - 0.5) * 22 + (rand() - 0.5) * 2 + Math.sin(theta * 1.8) * tsneRadius
-    ]);
-
-    genreCounts[genre] = (genreCounts[genre] || 0) + 1;
-  }
-
-  return { tracks, umap, tsne, genres: [...genres], genreCounts };
-}
-
-function colorForTrack(track: Track, colorMode: string, genreList: string[]) {
-  if (colorMode === 'genre') {
-    const idx = Math.max(0, genreList.indexOf(track.track_genre));
-    const hue = Math.round((idx / genreList.length) * 360);
-    return `hsla(${hue}, 84%, 62%, 0.86)`;
-  }
-  if (colorMode === 'valence') {
-    const hue = Math.round(track.valence * 130);
-    return `hsla(${hue}, 88%, 62%, 0.86)`;
-  }
-  if (colorMode === 'energy') {
-    const hue = Math.round(290 - track.energy * 130);
-    return `hsla(${hue}, 90%, 62%, 0.86)`;
-  }
-  const hue = Math.round(210 + (track.popularity / 100) * 120);
-  return `hsla(${hue}, 84%, 62%, 0.86)`;
-}
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export default function SpotifyVisualizer() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState('');
-  const [vizData, setVizData] = useState<VizData | null>(null);
-  const [vizMode, setVizMode] = useState<'umap' | 'tsne'>('umap');
-  const [colorMode, setColorMode] = useState<'genre' | 'valence' | 'energy' | 'popularity'>('genre');
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [activeTrack, setActiveTrack] = useState<Track | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const [data, setData] = useState<Payload | null>(null);
+  const [error, setError] = useState('');
+  const [projection, setProjection] = useState<Projection>('umap');
+  const [colorMode, setColorMode] = useState<ColorMode>('genre');
+  const [hiddenGenres, setHiddenGenres] = useState<Set<number>>(new Set());
+  const [query, setQuery] = useState('');
+  const [hover, setHover] = useState<{ i: number; x: number; y: number } | null>(null);
+  const [pinned, setPinned] = useState<number | null>(null);
+  const [size, setSize] = useState({ w: 960, h: 600, dpr: 1 });
 
-  const stats = useMemo(() => {
-    if (!vizData) return null;
-    const total = vizData.tracks.length;
-    const avgEnergy = vizData.tracks.reduce((sum, t) => sum + t.energy, 0) / total;
-    const avgValence = vizData.tracks.reduce((sum, t) => sum + t.valence, 0) / total;
-    let topGenre = '';
-    let topCount = 0;
-    Object.entries(vizData.genreCounts).forEach(([genre, count]) => {
-      if (count > topCount) {
-        topCount = count;
-        topGenre = genre;
-      }
-    });
-    return {
-      total,
-      genres: vizData.genres.length,
-      avgEnergy,
-      avgValence,
-      topGenre,
-      showing: selectedGenres.length
+  // Animated position: 0 = UMAP, 1 = t-SNE.
+  const mixRef = useRef(0);
+  const [mix, setMix] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    fetch('/data/spotify-universe.json')
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((json: Payload) => alive && setData(json))
+      .catch((e) => alive && setError(`Could not load the dataset (${e.message}).`));
+    return () => {
+      alive = false;
     };
-  }, [vizData, selectedGenres]);
-
-  const runLoad = () => {
-    setLoading(true);
-    setActiveTrack(null);
-    setProgress('Generating synthetic Spotify dataset...');
-
-    window.setTimeout(() => {
-      setProgress('Computing UMAP and t-SNE projection maps...');
-      window.setTimeout(() => {
-        const generated = generateData(25000);
-        setVizData(generated);
-        setSelectedGenres(generated.genres);
-        setLoading(false);
-        setProgress('Visualization ready');
-      }, 350);
-    }, 350);
-  };
+  }, []);
 
   useEffect(() => {
-    if (!vizData) runLoad();
-  }, [vizData]);
+    const el = wrapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const w = Math.round(entry.contentRect.width);
+      setSize({ w, h: Math.round(Math.min(720, Math.max(360, w * 0.62))), dpr: Math.min(2, window.devicePixelRatio || 1) });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
+  // Morph between projections.
   useEffect(() => {
-    if (!vizData || !canvasRef.current) return;
+    const target = projection === 'umap' ? 0 : 1;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      mixRef.current = target;
+      setMix(target);
+      return;
+    }
+    const from = mixRef.current;
+    if (from === target) return;
+    let raf = 0;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / MORPH_MS);
+      mixRef.current = from + (target - from) * ease(t);
+      setMix(mixRef.current);
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [projection]);
 
+  const matches = useMemo(() => {
+    if (!data) return null;
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return null;
+    const out = new Set<number>();
+    for (let i = 0; i < data.count; i += 1) {
+      if (data.name[i].toLowerCase().includes(q) || data.artist[i].toLowerCase().includes(q)) out.add(i);
+    }
+    return out;
+  }, [data, query]);
+
+  const colorOf = useCallback(
+    (i: number) => {
+      if (!data) return '#fff';
+      switch (colorMode) {
+        case 'genre':
+          return GENRE_COLORS[data.genre[i] % GENRE_COLORS.length];
+        case 'popularity':
+          return rampColor(data.popularity[i] / 100);
+        default:
+          return rampColor(data[colorMode][i]);
+      }
+    },
+    [data, colorMode]
+  );
+
+  // Screen positions for the current frame + a grid for fast hover lookup.
+  const frame = useMemo(() => {
+    if (!data) return null;
+    const pad = 24;
+    const { w, h } = size;
+    const xs = new Float32Array(data.count);
+    const ys = new Float32Array(data.count);
+    // Interpolate, then fit the current shape to the canvas with one uniform
+    // scale (no stretching, so distances stay honest).
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (let i = 0; i < data.count; i += 1) {
+      const ux = data.umap[2 * i];
+      const uy = data.umap[2 * i + 1];
+      xs[i] = ux + (data.tsne[2 * i] - ux) * mix;
+      ys[i] = uy + (data.tsne[2 * i + 1] - uy) * mix;
+      if (xs[i] < x0) x0 = xs[i];
+      if (xs[i] > x1) x1 = xs[i];
+      if (ys[i] < y0) y0 = ys[i];
+      if (ys[i] > y1) y1 = ys[i];
+    }
+    const s = Math.min((w - 2 * pad) / (x1 - x0 || 1), (h - 2 * pad) / (y1 - y0 || 1));
+    const ox = (w - (x1 - x0) * s) / 2;
+    const oy = (h - (y1 - y0) * s) / 2;
+    const grid = new Map<number, number[]>();
+    const cols = Math.ceil(w / CELL) + 1;
+    for (let i = 0; i < data.count; i += 1) {
+      xs[i] = ox + (xs[i] - x0) * s;
+      ys[i] = oy + (ys[i] - y0) * s;
+      if (hiddenGenres.has(data.genre[i])) continue;
+      const key = Math.floor(ys[i] / CELL) * cols + Math.floor(xs[i] / CELL);
+      const bucket = grid.get(key);
+      if (bucket) bucket.push(i);
+      else grid.set(key, [i]);
+    }
+    return { xs, ys, grid, cols };
+  }, [data, size, mix, hiddenGenres]);
+
+  // Draw.
+  useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas || !data || !frame) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    const width = canvas.width;
-    const height = canvas.height;
-    const points = vizMode === 'umap' ? vizData.umap : vizData.tsne;
-    const xMin = Math.min(...points.map((p) => p[0]));
-    const xMax = Math.max(...points.map((p) => p[0]));
-    const yMin = Math.min(...points.map((p) => p[1]));
-    const yMax = Math.max(...points.map((p) => p[1]));
-
-    ctx.fillStyle = '#060d19';
-    ctx.fillRect(0, 0, width, height);
-
-    const pad = 44;
-    const inGenre = new Set(selectedGenres);
-
-    for (let i = 0; i < points.length; i += 1) {
-      const track = vizData.tracks[i];
-      if (!inGenre.has(track.track_genre)) continue;
-      const px = ((points[i][0] - xMin) / (xMax - xMin || 1)) * (width - pad * 2) + pad;
-      const py = ((points[i][1] - yMin) / (yMax - yMin || 1)) * (height - pad * 2) + pad;
-      const color = colorForTrack(track, colorMode, vizData.genres);
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(px, py, 2.2, 0, Math.PI * 2);
-      ctx.fill();
+    const { w, h, dpr } = size;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#050b14';
+    ctx.fillRect(0, 0, w, h);
+    const dim = matches !== null;
+    const r = Math.max(1.6, Math.min(2.6, w / 520));
+    for (let i = 0; i < data.count; i += 1) {
+      if (hiddenGenres.has(data.genre[i]) || (dim && matches.has(i))) continue;
+      ctx.globalAlpha = dim ? 0.16 : 0.72;
+      ctx.fillStyle = colorOf(i);
+      ctx.fillRect(frame.xs[i] - r / 2, frame.ys[i] - r / 2, r, r);
     }
+    // Search hits are drawn last, larger, so nothing covers them.
+    if (dim) {
+      ctx.globalAlpha = 1;
+      matches.forEach((i) => {
+        if (hiddenGenres.has(data.genre[i])) return;
+        ctx.fillStyle = colorOf(i);
+        ctx.beginPath();
+        ctx.arc(frame.xs[i], frame.ys[i], r + 1.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+    }
+    ctx.globalAlpha = 1;
+    const mark = (i: number, color: string) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(frame.xs[i], frame.ys[i], 7, 0, Math.PI * 2);
+      ctx.stroke();
+    };
+    if (pinned !== null) mark(pinned, '#ffffff');
+    if (hover && hover.i !== pinned) mark(hover.i, 'rgba(255,255,255,0.7)');
+  }, [data, frame, size, colorOf, hiddenGenres, matches, pinned, hover]);
 
-    ctx.fillStyle = '#f1f6ff';
-    ctx.font = '600 24px var(--font-work), sans-serif';
-    ctx.fillText(`${vizMode.toUpperCase()} • ${selectedGenres.length}/${vizData.genres.length} genres`, 18, 34);
-    ctx.font = '400 14px var(--font-work), sans-serif';
-    ctx.fillStyle = '#98a8c0';
-    ctx.fillText(`Color: ${colorMode} • Visible tracks: ${vizData.tracks.filter((t) => inGenre.has(t.track_genre)).length.toLocaleString()}`, 18, 58);
-  }, [vizData, vizMode, colorMode, selectedGenres]);
-
-  const toggleGenre = (genre: string) => {
-    setSelectedGenres((prev) => {
-      if (prev.includes(genre)) return prev.filter((g) => g !== genre);
-      return [...prev, genre];
-    });
-  };
-
-  const onCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!vizData || !canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const clickX = ((event.clientX - rect.left) / rect.width) * canvas.width;
-    const clickY = ((event.clientY - rect.top) / rect.height) * canvas.height;
-
-    const points = vizMode === 'umap' ? vizData.umap : vizData.tsne;
-    const xMin = Math.min(...points.map((p) => p[0]));
-    const xMax = Math.max(...points.map((p) => p[0]));
-    const yMin = Math.min(...points.map((p) => p[1]));
-    const yMax = Math.max(...points.map((p) => p[1]));
-    const pad = 44;
-
-    const inGenre = new Set(selectedGenres);
-    let minDist = Infinity;
-    let bestIdx = -1;
-
-    for (let i = 0; i < points.length; i += 1) {
-      if (!inGenre.has(vizData.tracks[i].track_genre)) continue;
-      const px = ((points[i][0] - xMin) / (xMax - xMin || 1)) * (canvas.width - pad * 2) + pad;
-      const py = ((points[i][1] - yMin) / (yMax - yMin || 1)) * (canvas.height - pad * 2) + pad;
-      const dx = px - clickX;
-      const dy = py - clickY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < minDist && dist < 18) {
-        minDist = dist;
-        bestIdx = i;
+  const nearestAt = (x: number, y: number) => {
+    if (!frame) return -1;
+    let best = -1;
+    let bestD = 14 * 14;
+    const gx = Math.floor(x / CELL);
+    const gy = Math.floor(y / CELL);
+    for (let dy = -1; dy <= 1; dy += 1) {
+      for (let dx = -1; dx <= 1; dx += 1) {
+        const bucket = frame.grid.get((gy + dy) * frame.cols + gx + dx);
+        if (!bucket) continue;
+        for (const i of bucket) {
+          const d = (frame.xs[i] - x) ** 2 + (frame.ys[i] - y) ** 2;
+          if (d < bestD) {
+            bestD = d;
+            best = i;
+          }
+        }
       }
     }
-
-    if (bestIdx >= 0) setActiveTrack(vizData.tracks[bestIdx]);
+    return best;
   };
 
-  const downloadImage = () => {
+  const pointer = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const i = nearestAt(x, y);
+    setHover(i >= 0 ? { i, x, y } : null);
+  };
+
+  // Tracks closest to the pinned one on the current map.
+  const neighbours = useMemo(() => {
+    if (!data || !frame || pinned === null) return [];
+    const px = frame.xs[pinned];
+    const py = frame.ys[pinned];
+    const out: { i: number; d: number }[] = [];
+    for (let i = 0; i < data.count; i += 1) {
+      if (i === pinned || hiddenGenres.has(data.genre[i])) continue;
+      out.push({ i, d: (frame.xs[i] - px) ** 2 + (frame.ys[i] - py) ** 2 });
+    }
+    return out.sort((a, b) => a.d - b.d).slice(0, 6).map((n) => n.i);
+  }, [data, frame, pinned, hiddenGenres]);
+
+  const genreCounts = useMemo(() => {
+    if (!data) return [];
+    const c = data.genres.map(() => 0);
+    data.genre.forEach((g) => (c[g] += 1));
+    return c;
+  }, [data]);
+
+  const toggleGenre = (g: number) =>
+    setHiddenGenres((prev) => {
+      const next = new Set(prev);
+      if (next.has(g)) next.delete(g);
+      else next.add(g);
+      return next;
+    });
+
+  const download = () => {
     if (!canvasRef.current) return;
     const link = document.createElement('a');
-    link.download = `spotify-${vizMode}-${colorMode}.png`;
+    link.download = `spotify-audio-universe-${projection}-${colorMode}.png`;
     link.href = canvasRef.current.toDataURL('image/png');
     link.click();
   };
 
+  const visible = data ? data.genre.filter((g) => !hiddenGenres.has(g)).length : 0;
+  const card = (i: number) =>
+    data ? (
+      <>
+        <p className="viz-track-name"><strong>{data.name[i]}</strong> · {data.artist[i]}</p>
+        <p className="viz-track-meta">
+          {data.genres[data.genre[i]]} / {data.subgenres[data.subgenre[i]]} · popularity {data.popularity[i]} · {data.tempo[i]} BPM
+        </p>
+        <p className="viz-track-meta">
+          energy {data.energy[i].toFixed(2)} · valence {data.valence[i].toFixed(2)} · danceability {data.danceability[i].toFixed(2)} · acousticness {data.acousticness[i].toFixed(2)}
+        </p>
+      </>
+    ) : null;
+
   return (
-    <section className="viz-shell detail-panel reveal">
+    <section className="viz-shell detail-panel reveal" id="demo">
       <div className="viz-top">
         <div>
-          <h2 className="section-title" style={{ marginTop: 0 }}>Spotify Audio Universe Visualizer</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>Explore the map</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            Explore a 25,000-track research set across 30 genres. Switch UMAP and t-SNE, filter genre islands, inspect points, and export
-            publication-ready PNG snapshots.
+            {data ? data.count.toLocaleString('en-US') : '26,159'} real songs, each placed by nine Spotify audio features. Nearby
+            points sound alike. Switch projections to watch every track move between the two maps; hover to inspect,
+            click to pin and see its neighbours, search for an artist.
           </p>
         </div>
         <div className="viz-buttons">
-          <button type="button" className="btn" onClick={runLoad}>Regenerate Data</button>
-          <button type="button" className="btn" onClick={downloadImage} disabled={!vizData}>Download PNG</button>
+          <button type="button" className="btn" onClick={download} disabled={!data}>Download PNG</button>
         </div>
       </div>
 
-      {loading ? <p className="viz-loading">{progress}</p> : null}
-
-      {stats ? (
-        <div className="viz-stats">
-          <div className="viz-stat"><span>Total Tracks</span><strong>{stats.total.toLocaleString()}</strong></div>
-          <div className="viz-stat"><span>Genres</span><strong>{stats.genres}</strong></div>
-          <div className="viz-stat"><span>Avg Energy</span><strong>{stats.avgEnergy.toFixed(3)}</strong></div>
-          <div className="viz-stat"><span>Avg Valence</span><strong>{stats.avgValence.toFixed(3)}</strong></div>
-          <div className="viz-stat"><span>Top Genre</span><strong>{stats.topGenre}</strong></div>
-        </div>
-      ) : null}
+      {error ? <p className="viz-loading" role="alert">{error}</p> : null}
+      {!data && !error ? <p className="viz-loading">Loading 26k songs (≈0.7 MB)…</p> : null}
 
       <div className="viz-controls">
-        <div className="viz-control-group">
+        <div className="viz-control-group" role="group" aria-label="Projection">
           <span className="viz-control-label">Projection</span>
-          <button type="button" className={`btn ${vizMode === 'umap' ? 'btn-primary' : ''}`} onClick={() => setVizMode('umap')}>UMAP</button>
-          <button type="button" className={`btn ${vizMode === 'tsne' ? 'btn-primary' : ''}`} onClick={() => setVizMode('tsne')}>t-SNE</button>
-        </div>
-        <div className="viz-control-group">
-          <span className="viz-control-label">Color</span>
-          {(['genre', 'valence', 'energy', 'popularity'] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              className={`btn ${colorMode === mode ? 'btn-primary' : ''}`}
-              onClick={() => setColorMode(mode)}
-            >
-              {mode}
+          {(['umap', 'tsne'] as const).map((p) => (
+            <button key={p} type="button" aria-pressed={projection === p} className={`btn ${projection === p ? 'btn-primary' : ''}`} onClick={() => setProjection(p)}>
+              {p === 'umap' ? 'UMAP' : 't-SNE'}
             </button>
           ))}
         </div>
+        <div className="viz-control-group" role="group" aria-label="Colour by">
+          <span className="viz-control-label">Colour</span>
+          {(['genre', 'energy', 'valence', 'acousticness', 'popularity'] as const).map((m) => (
+            <button key={m} type="button" aria-pressed={colorMode === m} className={`btn ${colorMode === m ? 'btn-primary' : ''}`} onClick={() => setColorMode(m)}>
+              {m}
+            </button>
+          ))}
+        </div>
+        <label className="viz-search">
+          <span className="viz-control-label">Search</span>
+          <input type="search" placeholder="artist or track" value={query} onChange={(e) => setQuery(e.target.value)} />
+          {matches ? <span className="viz-search-count">{matches.size.toLocaleString()} found</span> : null}
+        </label>
       </div>
 
-      {vizData ? (
-        <>
-          <div className="viz-genre-controls">
-            <button type="button" className="btn" onClick={() => setSelectedGenres(vizData.genres)}>Select All</button>
-            <button type="button" className="btn" onClick={() => setSelectedGenres([])}>Clear</button>
-            <p className="viz-genre-label">Genre Filter ({selectedGenres.length}/{vizData.genres.length})</p>
-          </div>
-          <div className="viz-chip-wrap">
-            {vizData.genres.map((genre) => (
-              <button
-                type="button"
-                key={genre}
-                className={`viz-chip ${selectedGenres.includes(genre) ? 'is-on' : ''}`}
-                onClick={() => toggleGenre(genre)}
-              >
-                {genre} ({vizData.genreCounts[genre]})
-              </button>
-            ))}
-          </div>
-        </>
+      {data ? (
+        <div className="viz-chip-wrap" role="group" aria-label="Genres">
+          {data.genres.map((g, gi) => (
+            <button
+              type="button"
+              key={g}
+              aria-pressed={!hiddenGenres.has(gi)}
+              className={`viz-chip ${hiddenGenres.has(gi) ? '' : 'is-on'}`}
+              onClick={() => toggleGenre(gi)}
+            >
+              {colorMode === 'genre' ? <span className="viz-swatch" style={{ background: GENRE_COLORS[gi] }} /> : null}
+              {g} <span className="viz-chip-count">{genreCounts[gi].toLocaleString()}</span>
+            </button>
+          ))}
+          <span className="viz-visible">{visible.toLocaleString()} shown</span>
+        </div>
       ) : null}
 
-      <div className="viz-canvas-wrap">
-        <canvas ref={canvasRef} width={1600} height={900} className="viz-canvas" onClick={onCanvasClick} />
+      {colorMode !== 'genre' ? (
+        <div className="viz-ramp" aria-hidden="true">
+          <span>low {colorMode}</span>
+          <span className="viz-ramp-bar" style={{ background: `linear-gradient(90deg, ${RAMP.map((c) => `rgb(${c.join(',')})`).join(',')})` }} />
+          <span>high</span>
+        </div>
+      ) : null}
+
+      <div className="viz-canvas-wrap" ref={wrapRef} style={{ position: 'relative' }}>
+        <canvas
+          ref={canvasRef}
+          className="viz-canvas"
+          style={{ width: size.w, height: size.h, cursor: hover ? 'pointer' : 'crosshair' }}
+          onPointerMove={pointer}
+          onPointerLeave={() => setHover(null)}
+          onClick={() => setPinned(hover ? hover.i : null)}
+          role="img"
+          aria-label={`Scatter map of ${data?.count ?? 0} Spotify tracks projected with ${projection === 'umap' ? 'UMAP' : 't-SNE'}`}
+        />
+        {hover && data ? (
+          <div className="viz-tooltip" style={{ left: Math.min(hover.x + 14, size.w - 260), top: Math.max(hover.y - 12, 0) }}>
+            {card(hover.i)}
+          </div>
+        ) : null}
       </div>
 
-      {activeTrack ? (
+      {pinned !== null && data ? (
         <section className="viz-track-card">
-          <h3>Track Inspector</h3>
-          <p><strong>{activeTrack.track_name}</strong> by {activeTrack.artists}</p>
-          <p>
-            Genre: {activeTrack.track_genre} • Popularity: {activeTrack.popularity} • Tempo: {activeTrack.tempo.toFixed(0)} BPM
-          </p>
-          <p>
-            Energy {activeTrack.energy.toFixed(2)} • Valence {activeTrack.valence.toFixed(2)} • Danceability {activeTrack.danceability.toFixed(2)}
-          </p>
+          <h3>Pinned track</h3>
+          {card(pinned)}
+          <p className="viz-track-meta" style={{ marginTop: 12 }}><strong>Closest on this map:</strong></p>
+          <ul className="viz-neighbours">
+            {neighbours.map((n) => (
+              <li key={n}>
+                <button type="button" className="viz-neighbour" onClick={() => setPinned(n)}>
+                  {data.name[n]} · {data.artist[n]} <span>({data.genres[data.genre[n]]})</span>
+                </button>
+              </li>
+            ))}
+          </ul>
         </section>
+      ) : null}
+
+      {data ? (
+        <p className="viz-footnote">
+          UMAP ({data.method.umap.library}, n_neighbors {data.method.umap.n_neighbors}, min_dist {data.method.umap.min_dist}) and t-SNE
+          ({data.method.tsne.library}, perplexity {data.method.tsne.perplexity}) computed offline on z-scored features. Neighbourhood
+          trustworthiness at k=10: UMAP {data.method.umap.trustworthiness10}, t-SNE {data.method.tsne.trustworthiness10}. Data:{' '}
+          <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.name}</a>.
+        </p>
       ) : null}
     </section>
   );

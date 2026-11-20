@@ -1,29 +1,27 @@
 import Link from 'next/link';
+import { SITE } from '../lib/site';
 
 type PortfolioHeaderProps = {
   title?: string;
   kicker?: string;
 };
 
-export default function PortfolioHeader({
-  title = 'Jeremy Renger',
-  kicker = 'Creative technologist'
-}: PortfolioHeaderProps) {
+export default function PortfolioHeader({ title = SITE.name, kicker = SITE.role }: PortfolioHeaderProps) {
   return (
     <header className="site-header">
       <div className="header-wrap">
-        <div className="portfolio-mark">
+        <Link href="/" className="portfolio-mark" aria-label={`${SITE.name}, home`}>
           <span className="portfolio-kicker">{kicker}</span>
           <span className="portfolio-title">{title}</span>
-        </div>
-        <div className="header-actions">
-          <Link href="/" className="nav-link">Portfolio</Link>
+        </Link>
+        <nav className="header-actions" aria-label="Main">
+          <Link href="/" className="nav-link">Home</Link>
           <Link href="/projects/spotify-audio-universe" className="nav-link">Spotify Audio Universe</Link>
           <Link href="/projects/frequency-atlas" className="nav-link">Frequency Atlas</Link>
-          <a href="https://github.com/Jeremy-Renger" className="nav-link" target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-        </div>
+          <a href={SITE.github} className="nav-link" target="_blank" rel="noreferrer">GitHub</a>
+          {SITE.linkedin ? <a href={SITE.linkedin} className="nav-link" target="_blank" rel="noreferrer">LinkedIn</a> : null}
+          {SITE.email ? <a href={`mailto:${SITE.email}`} className="nav-link">Email</a> : null}
+        </nav>
       </div>
     </header>
   );

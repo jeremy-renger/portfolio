@@ -1,0 +1,98 @@
+{
+  "source": {
+    "name": "TidyTuesday 2020-01-21: Spotify songs (via the Spotify Web API / spotifyr)",
+    "url": "https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-01-21"
+  },
+  "method": {
+    "features": [
+      "danceability",
+      "energy",
+      "loudness",
+      "speechiness",
+      "acousticness",
+      "instrumentalness",
+      "liveness",
+      "valence",
+      "tempo"
+    ],
+    "scaling": "z-score per feature",
+    "umap": {
+      "library": "umap-learn 0.6.0",
+      "n_neighbors": 30,
+      "min_dist": 0.15,
+      "seed": 42,
+      "trustworthiness10": 0.917
+    },
+    "tsne": {
+      "library": "scikit-learn",
+      "perplexity": 40,
+      "init": "pca",
+      "seed": 42,
+      "trustworthiness10": 0.981
+    }
+  },
+  "purity": {
+    "overall": 0.375,
+    "by_genre": {
+      "edm": {
+        "neighbours_same_genre": 0.516,
+        "chance": 0.176
+      },
+      "latin": {
+        "neighbours_same_genre": 0.286,
+        "chance": 0.146
+      },
+      "pop": {
+        "neighbours_same_genre": 0.279,
+        "chance": 0.185
+      },
+      "r&b": {
+        "neighbours_same_genre": 0.283,
+        "chance": 0.155
+      },
+      "rap": {
+        "neighbours_same_genre": 0.441,
+        "chance": 0.197
+      },
+      "rock": {
+        "neighbours_same_genre": 0.427,
+        "chance": 0.142
+      }
+    }
+  },
+  "count": 26159,
+  "genres": [
+    "edm",
+    "latin",
+    "pop",
+    "r&b",
+    "rap",
+    "rock"
+  ],
+  "subgenres": [
+    "album rock",
+    "big room",
+    "classic rock",
+    "dance pop",
+    "electro house",
+    "electropop",
+    "gangster rap",
+    "hard rock",
+    "hip hop",
+    "hip pop",
+    "indie poptimism",
+    "latin hip hop",
+    "latin pop",
+    "neo soul",
+    "new jack swing",
+    "permanent wave",
+    "pop edm",
+    "post-teen pop",
+    "progressive electro house",
+    "reggaeton",
+    "southern hip hop",
+    "trap",
+    "tropical",
+    "urban contemporary"
+  ]
+}

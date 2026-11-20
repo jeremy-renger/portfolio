@@ -1,90 +1,127 @@
+import type { Metadata } from 'next';
 import PortfolioHeader from '../../../components/portfolio-header';
 import SpotifyVisualizer from '../../../components/spotify-visualizer';
+import summary from '../../../lib/spotify-summary.json';
+
+const n = summary.count.toLocaleString('en-US');
+const pct = (v: number) => Math.round(v * 100);
+const LABEL: Record<string, string> = { edm: 'EDM', latin: 'Latin', pop: 'Pop', 'r&b': 'R&B', rap: 'Rap', rock: 'Rock' };
+const purity = Object.entries(summary.purity.by_genre)
+  .map(([g, v]) => ({ genre: LABEL[g] ?? g, same: pct(v.neighbours_same_genre), chance: pct(v.chance) }))
+  .sort((a, b) => b.same - a.same);
+const overall = pct(summary.purity.overall);
+const chanceAll = pct(Object.values(summary.purity.by_genre).reduce((t, v) => t + v.chance * v.chance, 0));
+
+export const metadata: Metadata = {
+  title: 'Spotify Audio Universe | Jeremy Renger',
+  description:
+    'Real Spotify tracks projected with UMAP and t-SNE into an explorable map: morph between projections, search, inspect neighbours.'
+};
+
 
 export default function SpotifyAudioUniversePage() {
   return (
     <div className="page-theme page-theme-visualizer portfolio-shell">
-      <PortfolioHeader title="Spotify Audio Universe" kicker="Interactive systems case study" />
+      <PortfolioHeader title="Spotify Audio Universe" kicker="Data visualization case study" />
 
       <main className="main">
         <section className="hero reveal">
           <p className="hero-subtitle">Flagship project</p>
-          <h1 className="hero-title">Music data becomes an explorable spatial interface.</h1>
+          <h1 className="hero-title">{n} songs, mapped by how they sound.</h1>
           <p className="hero-copy">
-            Spotify Audio Universe maps a 25,000-track feature space into a browser-native visual system that makes
-            similarity, genre clustering, and sonic contrast legible at a glance.
+            Each point is a real track placed by nine Spotify audio features. Real UMAP and t-SNE projections run
+            offline in Python; the browser renders every point on canvas, morphs between the two maps, and lets
+            you search, hover, and inspect neighbours.
           </p>
           <div className="actions">
-            <a href="#demo" className="btn btn-primary">Open Demo</a>
-            <a href="https://github.com/Jeremy-Renger/portfolio" className="btn" target="_blank" rel="noreferrer">
-              View Repo
+            <a href="#demo" className="btn btn-primary">Explore the map</a>
+            <a
+              href="https://github.com/Jeremy-Renger/portfolio/blob/main/scripts/build_spotify_embedding.py"
+              className="btn"
+              target="_blank"
+              rel="noreferrer"
+            >
+              See the pipeline
             </a>
           </div>
           <div className="trust-bar">
             <div className="trust-item">
+              <span className="trust-label">Data</span>
+              <span className="trust-value">{n} unique songs · {summary.genres.length} genres · {summary.subgenres.length} subgenres</span>
+            </div>
+            <div className="trust-item">
+              <span className="trust-label">Methods</span>
+              <span className="trust-value">UMAP (umap-learn) · t-SNE (scikit-learn) · k-NN analysis</span>
+            </div>
+            <div className="trust-item">
+              <span className="trust-label">Front end</span>
+              <span className="trust-value">Next.js · TypeScript · canvas, grid-indexed hit testing</span>
+            </div>
+            <div className="trust-item">
               <span className="trust-label">Role</span>
-              <span className="trust-value">Product design + frontend engineering</span>
-            </div>
-            <div className="trust-item">
-              <span className="trust-label">Input</span>
-              <span className="trust-value">25,000 tracks across 30 genres</span>
-            </div>
-            <div className="trust-item">
-              <span className="trust-label">Core methods</span>
-              <span className="trust-value">UMAP, t-SNE, filtering, export</span>
-            </div>
-            <div className="trust-item">
-              <span className="trust-label">Why it matters</span>
-              <span className="trust-value">Turns high-dimensional audio features into a usable interface</span>
+              <span className="trust-value">Data pipeline, interaction design, implementation</span>
             </div>
           </div>
         </section>
 
-        <section className="detail-panel reveal reveal-delay-1">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Problem</h2>
-          <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            Recommendation systems and audio datasets are often numerically rich but visually opaque. This project asks
-            how to make latent musical structure readable enough for analysis, curation, and product experimentation.
-          </p>
-        </section>
+        <SpotifyVisualizer />
 
-        <section className="detail-panel reveal reveal-delay-1" id="demo">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Interactive Demo</h2>
+        <section className="detail-panel reveal reveal-delay-1">
+          <h2 className="section-title" style={{ marginTop: 0 }}>What the map shows</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            The demo recreates the interaction model with a synthetic Spotify-style dataset so reviewers can inspect the
-            full workflow quickly: projection switching, genre filtering, track inspection, and exportable views.
+            Playlist genre is a weak label for how a song sounds. Across all songs, {overall}% of a song&apos;s ten
+            nearest neighbours in feature space share its genre, against about {chanceAll}% by chance. EDM, rock and rap form real
+            regions; pop, latin and R&amp;B blend into each other. Colour by energy or acousticness to see the
+            structure the features actually carry.
           </p>
-          <SpotifyVisualizer />
+          <table className="purity-table">
+            <thead>
+              <tr>
+                <th scope="col">Genre</th>
+                <th scope="col">Nearest 10 neighbours, same genre</th>
+                <th scope="col">Chance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {purity.map((p) => (
+                <tr key={p.genre}>
+                  <td>{p.genre}</td>
+                  <td>
+                    <span className="purity-bar" style={{ width: `${p.same * 1.6}%` }} /> {p.same}%
+                  </td>
+                  <td>{p.chance}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </section>
 
         <section className="project-columns reveal reveal-delay-2">
           <article className="detail-panel">
             <h2 className="section-title" style={{ marginTop: 0 }}>Method</h2>
             <ul className="detail-list">
-              <li><strong>Input:</strong> energy, valence, danceability, tempo, acousticness, and related audio features.</li>
-              <li><strong>Transform:</strong> dimensionality reduction via UMAP and t-SNE to expose local and global similarity.</li>
-              <li><strong>Output:</strong> clustered genre islands, point-level inspection, and exportable visual snapshots.</li>
+              <li><strong>Input:</strong> danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo; z-scored; one row per title and artist.</li>
+              <li><strong>Projection:</strong> UMAP (n_neighbors 30, min_dist 0.15) and t-SNE (perplexity 40), fixed seed, so the maps are reproducible.</li>
+              <li><strong>Quality check:</strong> trustworthiness at k=10 is {summary.method.umap.trustworthiness10.toFixed(2)} for UMAP and {summary.method.tsne.trustworthiness10.toFixed(2)} for t-SNE: t-SNE keeps local neighbours better, UMAP keeps more of the global layout.</li>
+              <li><strong>Morph:</strong> both maps share one frame, so switching animates each track from its UMAP to its t-SNE position.</li>
             </ul>
           </article>
 
           <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Stack</h2>
+            <h2 className="section-title" style={{ marginTop: 0 }}>Engineering</h2>
             <ul className="detail-list">
-              <li><strong>App:</strong> Next.js App Router + TypeScript</li>
-              <li><strong>Rendering:</strong> React + canvas-based plotting</li>
-              <li><strong>Data model:</strong> feature synthesis, genre weighting, projection switching</li>
-              <li><strong>Focus:</strong> fast exploratory interaction, not just static charts</li>
+              <li><strong>Payload:</strong> columnar JSON, 2.4 MB raw, about 0.7 MB compressed, loaded after first paint.</li>
+              <li><strong>Rendering:</strong> one canvas pass over every point with additive blending, sized to device pixel ratio.</li>
+              <li><strong>Hit testing:</strong> a 12 px spatial grid makes hover lookup constant-time instead of scanning every point.</li>
+              <li><strong>Accessibility:</strong> pressed states on toggles, a labelled canvas, and no morph animation when reduced motion is set.</li>
             </ul>
           </article>
         </section>
 
-        <section className="detail-panel reveal reveal-delay-2">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Employer signal</h2>
-          <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            This is the strongest example of how I like to work: start from a dense model, decide what a reviewer
-            needs to understand quickly, and design the interface so exploration feels immediate instead of academic.
-          </p>
-        </section>
+        <p className="viz-footnote reveal">
+          Data: TidyTuesday 2020-01-21 Spotify songs, collected from the Spotify Web API with spotifyr. Not affiliated
+          with or endorsed by Spotify.
+        </p>
       </main>
     </div>
   );

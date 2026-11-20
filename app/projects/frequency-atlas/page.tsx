@@ -1,113 +1,83 @@
+import type { Metadata } from 'next';
 import PortfolioHeader from '../../../components/portfolio-header';
 import FrequencyAtlasVisualizer from '../../../components/frequency-atlas-visualizer';
+
+export const metadata: Metadata = {
+  title: 'Frequency Atlas | Jeremy Renger',
+  description:
+    'An interface design study: presenting research of very uneven quality so weak evidence looks weak and strong evidence looks strong.'
+};
 
 export default function FrequencyAtlasPage() {
   return (
     <div className="page-theme page-theme-research-hub portfolio-shell">
-      <PortfolioHeader title="Frequency Atlas" kicker="Research systems case study" />
+      <PortfolioHeader title="Frequency Atlas" kicker="Interface design study" />
 
       <main className="main frequency-whitepaper-shell">
         <section className="hero reveal">
-          <p className="hero-subtitle">Research case study</p>
-          <h1 className="hero-title">Signal-state research organized into a navigable intervention atlas.</h1>
+          <p className="hero-subtitle">Design study</p>
+          <h1 className="hero-title">Making weak evidence look weak.</h1>
           <p className="hero-copy">
-            Frequency Atlas reframes a dense evidence base around brainwave, entrainment, and intervention studies into
-            a browsable system for comparison, communication, and exploratory analysis.
+            Brainwave and neuromodulation research ranges from replicated clinical trials to single unblinded studies.
+            Most interfaces flatten that into one list where everything looks equally credible. Frequency Atlas puts the
+            strength of the evidence first, so a reader can tell the difference at a glance.
           </p>
           <div className="actions">
-            <a href="#visualizer" className="btn btn-primary">Open Visualizer</a>
-            <a href="/research/frequency-atlas-research-paper.pdf" className="btn" download="frequency-atlas-research-paper.pdf">
-              Download Paper
-            </a>
-            <a href="/research/frequency-atlas-download-guide.md" className="btn" download="frequency-atlas-download-guide.md">
-              Download Guide
-            </a>
+            <a href="#visualizer" className="btn btn-primary">Open the atlas</a>
           </div>
           <div className="trust-bar">
             <div className="trust-item">
-              <span className="trust-label">Research surface</span>
-              <span className="trust-value">150+ mapped intervention references</span>
+              <span className="trust-label">Scope</span>
+              <span className="trust-value">10 intervention types · 5 EEG bands · 31 cited sources</span>
             </div>
             <div className="trust-item">
-              <span className="trust-label">Core value</span>
-              <span className="trust-value">Comparative reasoning across frequency bands</span>
+              <span className="trust-label">Design problem</span>
+              <span className="trust-value">Show uncertainty without hiding the content</span>
             </div>
             <div className="trust-item">
-              <span className="trust-label">Output</span>
-              <span className="trust-value">Interactive atlas plus downloadable paper</span>
+              <span className="trust-label">Build</span>
+              <span className="trust-value">Next.js · TypeScript · typed research data model</span>
             </div>
             <div className="trust-item">
-              <span className="trust-label">Why it matters</span>
-              <span className="trust-value">Technical communication through interface design</span>
+              <span className="trust-label">Role</span>
+              <span className="trust-value">Research synthesis, information design, implementation</span>
             </div>
           </div>
         </section>
 
         <section className="project-columns reveal reveal-delay-1">
           <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Question</h2>
-            <p className="hero-copy" style={{ maxWidth: 'none' }}>
-              How can a large, uneven body of consciousness, neuromodulation, and entrainment research be translated
-              into a product-like interface without flattening its methodological nuance?
-            </p>
+            <h2 className="section-title" style={{ marginTop: 0 }}>Design decisions</h2>
+            <ul className="detail-list">
+              <li><strong>Evidence first:</strong> every intervention carries a strength badge, and lists sort strongest first.</li>
+              <li><strong>Counts are not quality:</strong> the overview shows study counts coloured by strength, because many weak studies are still weak.</li>
+              <li><strong>Honest charts:</strong> band bars show the reported direction of change only, and say so.</li>
+              <li><strong>Sources inline:</strong> each finding sits beside the papers it came from.</li>
+            </ul>
           </article>
 
           <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Method</h2>
+            <h2 className="section-title" style={{ marginTop: 0 }}>Data model</h2>
             <ul className="detail-list">
-              <li><strong>Scope:</strong> 150+ intervention and study references mapped across named frequency bands.</li>
-              <li><strong>Model:</strong> evidence quality, effect size, and outcome framing surface alongside each intervention.</li>
-              <li><strong>Output:</strong> searchable intervention comparisons, band-response views, and protocol combinations.</li>
+              <li><strong>Intervention:</strong> category, mechanism, per-band effects, evidence, citations.</li>
+              <li><strong>Evidence:</strong> study count, participants, pooled effect size (Cohen&apos;s d), replication status, and a four-level strength grade.</li>
+              <li><strong>Bands:</strong> delta, theta, alpha, beta and gamma as stable comparison anchors.</li>
             </ul>
           </article>
         </section>
 
         <section className="detail-panel reveal reveal-delay-1" id="visualizer">
-          <h2 className="section-title" style={{ marginTop: 0 }}>Interactive Atlas</h2>
+          <h2 className="section-title" style={{ marginTop: 0 }}>The atlas</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            The atlas turns static research notes into a live exploration surface. Reviewers can filter by intervention
-            class, inspect estimated band shifts, and compare the practical shape of different protocols in one place.
+            Filter by intervention type, search findings, and compare evidence strength across the field.
           </p>
           <FrequencyAtlasVisualizer />
-        </section>
-
-        <section className="project-columns reveal reveal-delay-2">
-          <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Findings</h2>
-            <ul className="detail-list">
-              <li><strong>Evidence framing:</strong> quality, participant count, and effect size stay visible.</li>
-              <li><strong>Information design:</strong> Delta, Theta, Alpha, Beta, and Gamma become stable comparison anchors.</li>
-              <li><strong>Use case:</strong> technical communication for signal-state research and intervention mapping.</li>
-            </ul>
-          </article>
-
-          <article className="detail-panel">
-            <h2 className="section-title" style={{ marginTop: 0 }}>Artifacts</h2>
-            <p className="hero-copy" style={{ maxWidth: 'none' }}>
-              This case study includes a concise download guide for quick context and a corrected PDF paper export for
-              deeper review. Both assets are aligned with the real-name portfolio.
-            </p>
-            <div className="artifact-stack">
-              <div className="artifact-card">
-                <span className="artifact-label">Paper</span>
-                <strong>Frequency Atlas Research Paper</strong>
-                <span className="artifact-note">Corrected author attribution for external sharing.</span>
-              </div>
-              <div className="artifact-card">
-                <span className="artifact-label">Guide</span>
-                <strong>Download and context notes</strong>
-                <span className="artifact-note">Short explanation of what the atlas and paper contain.</span>
-              </div>
-            </div>
-            <div className="actions" style={{ marginTop: '1rem' }}>
-              <a href="/research/frequency-atlas-research-paper.pdf" className="btn btn-primary" download="frequency-atlas-research-paper.pdf">
-                Download Paper
-              </a>
-              <a href="/research/frequency-atlas-download-guide.md" className="btn" download="frequency-atlas-download-guide.md">
-                Download Guide
-              </a>
-            </div>
-          </article>
+          <p className="atlas-notice" role="note">
+            <strong>Not medical advice.</strong> This is an information-design project. Evidence grades are the
+            author&apos;s own, based on study count, design and replication, not a formal clinical assessment. Findings
+            are summarised from the cited papers and have not been independently verified. Talk to a clinician before
+            trying any intervention.
+          </p>
         </section>
       </main>
     </div>
