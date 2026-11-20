@@ -84,9 +84,6 @@ export const FREQUENCY_BANDS: Record<string, FrequencyBand> = {
 
 export interface Evidence {
   quality: "gold" | "silver" | "bronze" | "preliminary";
-  studyCount: number;
-  participants: number;
-  effectSize: number; // Cohen's d
   replicationStatus: "replicated" | "emerging" | "preliminary";
 }
 
@@ -97,13 +94,6 @@ export interface FrequencyEffect {
   region?: string;
 }
 
-export interface ClinicalOutcome {
-  condition: string;
-  effectiveness: "high" | "moderate" | "low" | "investigational";
-  timeToEffect: string;
-  durationOfEffect: string;
-}
-
 // Each source carries its audit status. "verified": found at the publisher or
 // PubMed and the details match. "unverified": not yet checked. Sources that
 // could not be found at all are removed, along with the findings they backed.
@@ -111,6 +101,7 @@ export interface Citation {
   text: string;
   url: string;
   status: "verified" | "unverified";
+  note?: string;
 }
 
 export interface Intervention {
@@ -121,9 +112,6 @@ export interface Intervention {
   mechanism: string;
   frequencyEffects: FrequencyEffect[];
   evidence: Evidence;
-  clinicalOutcomes: ClinicalOutcome[];
-  safety: "excellent" | "good" | "moderate" | "requires-supervision";
-  cost: "$" | "$$" | "$$$" | "$$$$" | "$$$$$";
   accessibility: "universal" | "consumer" | "clinical" | "restricted";
   timeInvestment: string;
   keyFindings: string[];
@@ -145,39 +133,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "gold",
-      studyCount: 28,
-      participants: 1847,
-      effectSize: 0.8,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Anxiety disorders",
-        effectiveness: "high",
-        timeToEffect: "4-8 weeks",
-        durationOfEffect: "Lasting with practice"
-      },
-      {
-        condition: "Depression",
-        effectiveness: "high",
-        timeToEffect: "8-12 weeks",
-        durationOfEffect: "Lasting with practice"
-      },
-      {
-        condition: "ADHD",
-        effectiveness: "moderate",
-        timeToEffect: "8-12 weeks",
-        durationOfEffect: "Requires maintenance"
-      },
-      {
-        condition: "Peak performance",
-        effectiveness: "high",
-        timeToEffect: "4-8 weeks",
-        durationOfEffect: "Lasting"
-      }
-    ],
-    safety: "excellent",
-    cost: "$",
     accessibility: "universal",
     timeInvestment: "20-60 min daily",
     keyFindings: [
@@ -186,9 +143,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Theta increases with distractions; alpha relates to fewer distractions and deeper states"
     ],
     citations: [
-      { text: "Lutz et al. (2004). PNAS - Long-term meditators self-induce high-amplitude gamma synchrony", url: "", status: "unverified" },
-      { text: "Travis & Shear (2010). Consciousness & Cognition - Focused attention, open monitoring meditation", url: "", status: "unverified" },
-      { text: "Braboszcz et al. (2017). PLoS ONE - Meditation experience correlates with gamma power", url: "", status: "unverified" }
+      { text: "Lutz et al. (2004). PNAS 101(46) - Long-term meditators self-induce high-amplitude gamma synchrony during mental practice", url: "https://doi.org/10.1073/pnas.0407401101", status: "verified" },
+      { text: "Travis & Shear (2010). Consciousness and Cognition 19(4) - Focused attention, open monitoring and automatic self-transcending", url: "https://doi.org/10.1016/j.concog.2010.01.007", status: "verified" },
+      { text: "Braboszcz et al. (2017). PLoS ONE 12(1) - Increased gamma brainwave amplitude compared to control in three different meditation traditions", url: "https://doi.org/10.1371/journal.pone.0170647", status: "verified" }
     ]
   },
   {
@@ -206,33 +163,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "silver",
-      studyCount: 18,
-      participants: 892,
-      effectSize: 0.5,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Anxiety",
-        effectiveness: "moderate",
-        timeToEffect: "Immediate to minutes",
-        durationOfEffect: "Hours"
-      },
-      {
-        condition: "Sleep quality",
-        effectiveness: "moderate",
-        timeToEffect: "Immediate",
-        durationOfEffect: "Single night"
-      },
-      {
-        condition: "Cognitive performance",
-        effectiveness: "moderate",
-        timeToEffect: "Minutes",
-        durationOfEffect: "Hours"
-      }
-    ],
-    safety: "excellent",
-    cost: "$",
     accessibility: "universal",
     timeInvestment: "10-30 min per session",
     keyFindings: [
@@ -243,9 +175,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Can be combined with meditation or used alone for quick state shifts"
     ],
     citations: [
-      { text: "Jirakittayakorn & Wongsawat (2017). Frontiers - 6 Hz binaural beats enhance cortical connectivity", url: "", status: "unverified" },
-      { text: "Chaieb et al. (2015). Frontiers - Auditory beat stimulation and brainwave entrainment", url: "", status: "unverified" },
-      { text: "Garcia-Argibay et al. (2019). Psychological Research - Meta-analysis of binaural beat efficacy", url: "", status: "unverified" }
+      { text: "Jirakittayakorn & Wongsawat (2017). Frontiers in Neuroscience 11 - Brain responses to a 6-Hz binaural beat", url: "https://doi.org/10.3389/fnins.2017.00365", status: "verified" },
+      { text: "Chaieb et al. (2015). Frontiers in Psychiatry 6 - Auditory beat stimulation and its effects on cognition and mood states (review)", url: "https://doi.org/10.3389/fpsyt.2015.00070", status: "verified" },
+      { text: "Garcia-Argibay et al. (2019). Psychological Research 83(2) - Efficacy of binaural auditory beats in cognition, anxiety, and pain perception: a meta-analysis", url: "https://doi.org/10.1007/s00426-018-1066-8", status: "verified" }
     ]
   },
   {
@@ -262,33 +194,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "gold",
-      studyCount: 22,
-      participants: 3456,
-      effectSize: 0.9,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Treatment-resistant depression",
-        effectiveness: "high",
-        timeToEffect: "2-4 weeks",
-        durationOfEffect: "Months (6+ with maintenance)"
-      },
-      {
-        condition: "Anxiety disorders",
-        effectiveness: "moderate",
-        timeToEffect: "2-4 weeks",
-        durationOfEffect: "Months"
-      },
-      {
-        condition: "PTSD",
-        effectiveness: "moderate",
-        timeToEffect: "4-6 weeks",
-        durationOfEffect: "Months"
-      }
-    ],
-    safety: "good",
-    cost: "$$$$$",
     accessibility: "clinical",
     timeInvestment: "Daily sessions, 2-6 weeks",
     keyFindings: [
@@ -298,9 +205,9 @@ export const INTERVENTIONS: Intervention[] = [
       "'Closed-loop' stimulation adjusting to real-time brain state shows enhanced efficacy"
     ],
     citations: [
-      { text: "Blumberger et al. (2018). Lancet - Theta burst stimulation for treatment-resistant depression", url: "", status: "unverified" },
-      { text: "Cole et al. (2022). American Journal of Psychiatry 179(2) - Stanford Neuromodulation Therapy (SNT): a double-blind randomized controlled trial", url: "https://pubmed.ncbi.nlm.nih.gov/34711062/", status: "verified" },
-      { text: "Thut et al. (2011). Current Biology 21(14) - Rhythmic TMS causes local entrainment of natural oscillatory signatures", url: "https://doi.org/10.1016/j.cub.2011.05.049", status: "verified" }
+      { text: "Blumberger et al. (2018). Lancet 391 - Theta burst vs high-frequency rTMS in depression (THREE-D): a randomised non-inferiority trial", url: "https://doi.org/10.1016/S0140-6736(18)30295-2", status: "verified" },
+      { text: "Cole et al. (2022). American Journal of Psychiatry 179(2) - Stanford Neuromodulation Therapy (SNT): a double-blind randomized controlled trial", url: "https://pubmed.ncbi.nlm.nih.gov/34711062/", status: "verified", note: "Journal corrected (was listed as JAMA Psychiatry)." },
+      { text: "Thut et al. (2011). Current Biology 21(14) - Rhythmic TMS causes local entrainment of natural oscillatory signatures", url: "https://doi.org/10.1016/j.cub.2011.05.049", status: "verified", note: "Journal corrected (was listed as PNAS)." }
     ]
   },
   {
@@ -317,33 +224,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "gold",
-      studyCount: 15,
-      participants: 2134,
-      effectSize: 0.8,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Epilepsy (refractory)",
-        effectiveness: "high",
-        timeToEffect: "2-6 months",
-        durationOfEffect: "Years (with device)"
-      },
-      {
-        condition: "Depression (treatment-resistant)",
-        effectiveness: "moderate",
-        timeToEffect: "3-6 months",
-        durationOfEffect: "Years (with device)"
-      },
-      {
-        condition: "Cognitive enhancement",
-        effectiveness: "moderate",
-        timeToEffect: "Weeks",
-        durationOfEffect: "Requires ongoing stimulation"
-      }
-    ],
-    safety: "moderate",
-    cost: "$$$$$",
     accessibility: "clinical",
     timeInvestment: "Surgical implant (invasive) or daily sessions (taVNS)",
     keyFindings: [
@@ -354,9 +236,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Non-invasive taVNS offers similar benefits to implanted VNS for many applications"
     ],
     citations: [
-      { text: "Assenza et al. (2017). Epilepsy Research - VNS modulates EEG synchronization", url: "", status: "unverified" },
-      { text: "Cao et al. (2017). Brain Stimulation - VNS enhances cortical plasticity via noradrenergic system", url: "", status: "unverified" },
-      { text: "Burger et al. (2020). Brain Stimulation - taVNS modulates brain networks", url: "", status: "unverified" }
+      { text: "(2024). Biomedicines 12(3) - Characterization of vagus nerve stimulation dose-dependent effects on EEG power spectrum and synchronization", url: "https://doi.org/10.3390/biomedicines12030557", status: "verified", note: "Replaces a citation that could not be found (Assenza 2017)." },
+      { text: "Tseng et al. (2021). Scientific Reports 11 - Local activation of alpha-2 adrenergic receptors is required for VNS-induced motor cortical plasticity (rats)", url: "https://doi.org/10.1038/s41598-021-00976-2", status: "verified", note: "Replaces a citation that could not be found (Cao 2017)." },
+      { text: "Rings et al. (2021). Frontiers in Physiology 12 - Impact of transcutaneous auricular vagus nerve stimulation on large-scale functional brain networks", url: "https://doi.org/10.3389/fphys.2021.700261", status: "verified", note: "Replaces a citation that could not be found (Burger 2020)." }
     ]
   },
   {
@@ -372,51 +254,18 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "silver",
-      studyCount: 19,
-      participants: 743,
-      effectSize: 0.7,
       replicationStatus: "emerging"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Alzheimer's disease",
-        effectiveness: "investigational",
-        timeToEffect: "Weeks to months",
-        durationOfEffect: "Requires ongoing treatment"
-      },
-      {
-        condition: "Traumatic brain injury",
-        effectiveness: "moderate",
-        timeToEffect: "Weeks",
-        durationOfEffect: "Months"
-      },
-      {
-        condition: "Cognitive enhancement",
-        effectiveness: "moderate",
-        timeToEffect: "Minutes to weeks",
-        durationOfEffect: "Hours to days"
-      },
-      {
-        condition: "Autism spectrum (children)",
-        effectiveness: "investigational",
-        timeToEffect: "Weeks",
-        durationOfEffect: "Requires ongoing treatment"
-      }
-    ],
-    safety: "excellent",
-    cost: "$$",
     accessibility: "consumer",
     timeInvestment: "10-20 min per session",
     keyFindings: [
       "810 nm pulsed at 40 Hz significantly increases power across ALL frequency bands",
-      "40 Hz photobiomodulation reduced delta brainwave power in autistic children, correlating with symptom improvements",
       "Reduces oxidative stress, increases cerebral blood flow, enhances neurogenesis and synaptogenesis",
       "NIR-TPBM changes spectral brain activity in alpha/beta ranges and improves visual function"
     ],
     citations: [
-      { text: "Zomorrodi et al. (2019). Scientific Reports 9 - Pulsed near-infrared transcranial and intranasal photobiomodulation significantly modulates neural oscillations: a pilot exploratory study", url: "https://doi.org/10.1038/s41598-019-42693-x", status: "verified" },
-      { text: "Wang et al. (2019). Neurophotonics - tPBM for autism spectrum disorder", url: "", status: "unverified" },
-      { text: "Salehpour et al. (2018). Journal of Alzheimer's Disease - tPBM shows promise for neurodegenerative diseases", url: "", status: "unverified" }
+      { text: "Zomorrodi et al. (2019). Scientific Reports 9 - Pulsed near-infrared transcranial and intranasal photobiomodulation significantly modulates neural oscillations: a pilot exploratory study", url: "https://doi.org/10.1038/s41598-019-42693-x", status: "verified", note: "Journal and title corrected (was listed as NeuroImage). A pilot study." },
+      { text: "Salehpour et al. (2018). Molecular Neurobiology 55 - Brain photobiomodulation therapy: a narrative review", url: "https://doi.org/10.1007/s12035-017-0852-4", status: "verified", note: "Journal corrected (was listed as Journal of Alzheimer's Disease)." }
     ]
   },
   {
@@ -434,39 +283,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "gold",
-      studyCount: 17,
-      participants: 687,
-      effectSize: 1.2,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Treatment-resistant depression",
-        effectiveness: "high",
-        timeToEffect: "Immediate to days",
-        durationOfEffect: "Weeks to months"
-      },
-      {
-        condition: "PTSD",
-        effectiveness: "high",
-        timeToEffect: "Days to weeks",
-        durationOfEffect: "Months (with integration)"
-      },
-      {
-        condition: "Addiction",
-        effectiveness: "moderate",
-        timeToEffect: "Days to weeks",
-        durationOfEffect: "Months"
-      },
-      {
-        condition: "End-of-life anxiety",
-        effectiveness: "high",
-        timeToEffect: "Immediate",
-        durationOfEffect: "Lasting"
-      }
-    ],
-    safety: "moderate",
-    cost: "$",
     accessibility: "restricted",
     timeInvestment: "Single sessions with integration",
     keyFindings: [
@@ -478,9 +296,9 @@ export const INTERVENTIONS: Intervention[] = [
       "CRITICAL: Requires screening, set/setting, and integration support for safety and efficacy"
     ],
     citations: [
-      { text: "Carhart-Harris et al. (2016). PNAS - Neural correlates of the LSD experience", url: "", status: "unverified" },
-      { text: "Timmermann et al. (2019). Scientific Reports 9 - Neural correlates of the DMT experience assessed with multivariate EEG", url: "https://doi.org/10.1038/s41598-019-51974-4", status: "verified" },
-      { text: "Barrett et al. (2020). Neuroscience & Biobehavioral Reviews - Psychedelics and neuroplasticity", url: "", status: "unverified" }
+      { text: "Carhart-Harris et al. (2016). PNAS 113(17) - Neural correlates of the LSD experience revealed by multimodal neuroimaging", url: "https://doi.org/10.1073/pnas.1518377113", status: "verified" },
+      { text: "Timmermann et al. (2019). Scientific Reports 9 - Neural correlates of the DMT experience assessed with multivariate EEG", url: "https://doi.org/10.1038/s41598-019-51974-4", status: "verified", note: "Title corrected (was listed as 'DMT alters cortical travelling waves')." },
+      { text: "de Vos et al. (2021). Frontiers in Psychiatry 12 - Psychedelics and neuroplasticity: a systematic review", url: "https://doi.org/10.3389/fpsyt.2021.724606", status: "verified", note: "Replaces a citation that could not be found (Barrett 2020)." }
     ]
   },
   {
@@ -498,39 +316,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "gold",
-      studyCount: 14,
-      participants: 1923,
-      effectSize: 0.8,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "ADHD",
-        effectiveness: "high",
-        timeToEffect: "20-40 sessions",
-        durationOfEffect: "Lasting (years)"
-      },
-      {
-        condition: "Anxiety",
-        effectiveness: "high",
-        timeToEffect: "15-25 sessions",
-        durationOfEffect: "Lasting with practice"
-      },
-      {
-        condition: "Depression",
-        effectiveness: "moderate",
-        timeToEffect: "20-30 sessions",
-        durationOfEffect: "6-12 months"
-      },
-      {
-        condition: "Peak performance",
-        effectiveness: "high",
-        timeToEffect: "10-20 sessions",
-        durationOfEffect: "Lasting with maintenance"
-      }
-    ],
-    safety: "excellent",
-    cost: "$$$",
     accessibility: "clinical",
     timeInvestment: "20-40 sessions, 30-45 min each",
     keyFindings: [
@@ -540,9 +327,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Coherence training (synchronization between regions) particularly effective for peak performance"
     ],
     citations: [
-      { text: "Arns et al. (2014). Clinical EEG & Neuroscience - Neurofeedback for ADHD meta-analysis", url: "", status: "unverified" },
-      { text: "Hammond (2005). Journal of Adult Development - Neurofeedback for anxiety", url: "", status: "unverified" },
-      { text: "Gruzelier (2014). Neuroscience & Biobehavioral Reviews 44 - EEG-neurofeedback for optimising performance (three-part review)", url: "https://doi.org/10.1016/j.neubiorev.2013.09.015", status: "verified" }
+      { text: "Arns, Heinrich & Strehl (2014). Biological Psychology 95 - Evaluation of neurofeedback in ADHD: the long and winding road", url: "https://doi.org/10.1016/j.biopsycho.2013.11.013", status: "verified", note: "Journal corrected (was listed as Clinical EEG & Neuroscience)." },
+      { text: "Hammond (2005). Journal of Adult Development 12 - Neurofeedback treatment of depression and anxiety", url: "https://doi.org/10.1007/s10804-005-7029-5", status: "verified" },
+      { text: "Gruzelier (2014). Neuroscience & Biobehavioral Reviews 44 - EEG-neurofeedback for optimising performance (three-part review)", url: "https://doi.org/10.1016/j.neubiorev.2013.09.015", status: "verified", note: "Journal corrected (was listed as Frontiers)." }
     ]
   },
   {
@@ -558,39 +345,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "silver",
-      studyCount: 12,
-      participants: 1456,
-      effectSize: 0.7,
       replicationStatus: "replicated"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Stress/anxiety",
-        effectiveness: "high",
-        timeToEffect: "Minutes to weeks",
-        durationOfEffect: "Requires daily practice"
-      },
-      {
-        condition: "Hypertension",
-        effectiveness: "moderate",
-        timeToEffect: "Weeks",
-        durationOfEffect: "Requires maintenance"
-      },
-      {
-        condition: "Depression",
-        effectiveness: "moderate",
-        timeToEffect: "Weeks",
-        durationOfEffect: "Requires maintenance"
-      },
-      {
-        condition: "Peak performance",
-        effectiveness: "high",
-        timeToEffect: "Minutes",
-        durationOfEffect: "Hours (acute), lasting (with training)"
-      }
-    ],
-    safety: "excellent",
-    cost: "$",
     accessibility: "universal",
     timeInvestment: "5-15 min, 2-3x daily",
     keyFindings: [
@@ -600,9 +356,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Can be learned in single session; benefits immediate but deepen with practice"
     ],
     citations: [
-      { text: "McCraty et al. (2009). International Journal of Psychophysiology - Heart-brain coherence", url: "", status: "unverified" },
-      { text: "McCraty & Zayas (2014). Frontiers - Cardiac coherence and emotional self-regulation", url: "", status: "unverified" },
-      { text: "Shaffer et al. (2014). Frontiers - Heart rate variability: New perspectives", url: "", status: "unverified" }
+      { text: "McCraty et al. (2009). Integral Review 5(2) - The coherent heart: heart-brain interactions, psychophysiological coherence, and the emergence of system-wide order", url: "https://integral-review.org/the-coherent-heart-heart-brain-interactions-psychophysiological-coherence-and-the-emergence-of-system-wide-order/", status: "verified", note: "Journal corrected (was listed as International Journal of Psychophysiology). Published by the HeartMath Institute's researchers." },
+      { text: "McCraty & Zayas (2014). Frontiers in Psychology 5 - Cardiac coherence, self-regulation, autonomic stability, and psychosocial well-being (hypothesis and theory)", url: "https://doi.org/10.3389/fpsyg.2014.01090", status: "verified" },
+      { text: "Shaffer, McCraty & Zerr (2014). Frontiers in Psychology 5 - A healthy heart is not a metronome: an integrative review of the heart's anatomy and heart rate variability", url: "https://doi.org/10.3389/fpsyg.2014.01040", status: "verified" }
     ]
   },
   {
@@ -617,33 +373,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "bronze",
-      studyCount: 11,
-      participants: 543,
-      effectSize: 0.4,
       replicationStatus: "emerging"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Insomnia",
-        effectiveness: "moderate",
-        timeToEffect: "Days to weeks",
-        durationOfEffect: "Requires ongoing exposure"
-      },
-      {
-        condition: "Circadian rhythm disorders",
-        effectiveness: "moderate",
-        timeToEffect: "Weeks",
-        durationOfEffect: "Requires ongoing exposure"
-      },
-      {
-        condition: "General wellness",
-        effectiveness: "low",
-        timeToEffect: "Variable",
-        durationOfEffect: "Variable"
-      }
-    ],
-    safety: "excellent",
-    cost: "$",
     accessibility: "consumer",
     timeInvestment: "Passive exposure, 30-60 min",
     keyFindings: [
@@ -653,9 +384,9 @@ export const INTERVENTIONS: Intervention[] = [
       "Research quality is lower than other interventions - more rigorous studies needed"
     ],
     citations: [
-      { text: "Cherry (2002). Natural Hazards 26(3) - Schumann resonances, a plausible biophysical mechanism for the human health effects of solar/geomagnetic activity", url: "https://doi.org/10.1023/A:1015637127504", status: "verified" },
-      { text: "Pobachenko et al. (2006). Biophysics - Human functional systems synchronization with Schumann resonance", url: "", status: "unverified" },
-      { text: "Persinger (1987). Medical Hypotheses - Geomagnetic activity and enhanced mortality", url: "", status: "unverified" }
+      { text: "Cherry (2002). Natural Hazards 26(3) - Schumann resonances, a plausible biophysical mechanism for the human health effects of solar/geomagnetic activity", url: "https://doi.org/10.1023/A:1015637127504", status: "verified", note: "Journal corrected (was listed as Medical Hypotheses)." },
+      { text: "Pobachenko et al. (2006). Coherence between Schumann resonance and human EEG variations in a small sample (primary record not located)", url: "https://doi.org/10.1371/journal.pone.0146595", status: "unverified", note: "Known only through a later paper that summarizes it (Saroka, Vares & Persinger 2016, PLoS ONE)." },
+      { text: "Bureau & Persinger (1992). International Journal of Biometeorology 36 - Geomagnetic activity and enhanced mortality in rats with acute (epileptic) limbic lability", url: "https://doi.org/10.1007/BF02726403", status: "verified", note: "Corrected: listed as Persinger 1987, Medical Hypotheses. The real paper is a 1992 study in rats." }
     ]
   },
   {
@@ -670,21 +401,8 @@ export const INTERVENTIONS: Intervention[] = [
     ],
     evidence: {
       quality: "bronze",
-      studyCount: 8,
-      participants: 312,
-      effectSize: 0.3,
       replicationStatus: "preliminary"
     },
-    clinicalOutcomes: [
-      {
-        condition: "Stress/relaxation",
-        effectiveness: "low",
-        timeToEffect: "Minutes",
-        durationOfEffect: "Duration of exposure"
-      }
-    ],
-    safety: "excellent",
-    cost: "$",
     accessibility: "universal",
     timeInvestment: "15-30 min",
     keyFindings: [
@@ -696,9 +414,20 @@ export const INTERVENTIONS: Intervention[] = [
       "Requires significantly more rigorous research before strong claims can be made"
     ],
     citations: [
-      { text: "Akimoto et al. (2018). Health - 528 Hz music reduces stress hormones", url: "", status: "unverified" },
-      { text: "Calamassi & Pomponi (2019). Double-blind cross-over pilot study of music tuned to 432 Hz vs 440 Hz (small sample; journal not yet confirmed)", url: "", status: "unverified" },
-      { text: "Horowitz (2000). Medical Veritas - 528 Hz 'Love frequency' theory (note: lacks peer review)", url: "", status: "unverified" }
+      { text: "Akimoto et al. (2018). Health 10 - Effect of 528 Hz music on the endocrine system and autonomic nervous system (9 participants)", url: "https://doi.org/10.4236/health.2018.109088", status: "verified" },
+      { text: "Calamassi & Pomponi (2019). Explore 15(4) - Music tuned to 440 Hz versus 432 Hz and the health effects: a double-blind cross-over pilot study", url: "https://doi.org/10.1016/j.explore.2019.04.001", status: "verified", note: "Journal corrected (was listed as Alternative Therapies). Small, non-randomized pilot." }
     ]
   }
 ];
+
+// Results of the full source audit (November 2026): every citation in the
+// original AI-drafted atlas, checked against the publisher, PubMed or the
+// journal's own site.
+export const SOURCE_AUDIT = {
+  checked: 31,
+  correctAsWritten: 12,
+  realButWrongDetails: 11,
+  notFound: 7,
+  unconfirmed: 1,
+  replacedWithRealSources: 4
+};

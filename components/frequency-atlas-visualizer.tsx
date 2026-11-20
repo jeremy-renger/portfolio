@@ -30,7 +30,8 @@ const EVIDENCE: Record<Intervention['evidence']['quality'], { label: string; ran
 };
 
 const byEvidence = (a: Intervention, b: Intervention) =>
-  EVIDENCE[a.evidence.quality].rank - EVIDENCE[b.evidence.quality].rank || b.evidence.studyCount - a.evidence.studyCount;
+  EVIDENCE[a.evidence.quality].rank - EVIDENCE[b.evidence.quality].rank ||
+  b.citations.filter((c) => c.status === 'verified').length - a.citations.filter((c) => c.status === 'verified').length;
 
 function effectToAfter(change: string, magnitude: string) {
   const map: Record<string, number> = { small: 12, medium: 22, large: 34 };
@@ -167,7 +168,7 @@ export default function FrequencyAtlasVisualizer() {
 
               <div className="atlas-findings">
                 <h4>Reported findings</h4>
-                <p className="atlas-caption">From the original draft. Treat a finding as checked only when its source below is marked verified.</p>
+                <p className="atlas-caption">From the original draft and not yet matched to specific sources. "Verified" below means the paper is real and cited correctly, not that it supports each finding.</p>
                 <ul>
                   {selected.keyFindings.slice(0, 5).map((finding) => (
                     <li key={finding}>{finding}</li>
@@ -179,6 +180,7 @@ export default function FrequencyAtlasVisualizer() {
                     <li key={c.text}>
                       <em className={`src-badge src-${c.status}`}>{c.status === 'verified' ? '✓ verified' : 'unverified'}</em>{' '}
                       {c.url ? <a href={c.url} target="_blank" rel="noreferrer">{c.text}</a> : c.text}
+                      {c.note ? <span className="src-note"> {c.note}</span> : null}
                     </li>
                   ))}
                 </ul>
@@ -192,7 +194,7 @@ export default function FrequencyAtlasVisualizer() {
         <h4>Source audit</h4>
         <p className="atlas-caption">
           Sources per intervention: solid = checked against the publisher or PubMed, outline = not yet checked.
-          {' '}{verifiedTotal} of {sourceTotal} verified so far; 1 source that could not be found has been removed.
+          {' '}{verifiedTotal} of {sourceTotal} verified.
         </p>
         <div className="ev-overview">
           {[...INTERVENTIONS].sort(byEvidence).map((item) => {

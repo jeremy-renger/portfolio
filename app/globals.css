@@ -2599,3 +2599,11 @@ button:focus-visible {
 .src-cell { display: block; height: 100%; border: 1px solid #f2b94b; border-radius: 2px; }
 .src-cell.is-ok { background: #5de1d4; border-color: #5de1d4; }
 .header-actions { flex-wrap: wrap; justify-content: flex-end; overflow: visible; }
+.src-note { display: block; font-size: 0.72rem; opacity: 0.75; margin-top: 0.1rem; }
+
+.audit-bar { display: flex; gap: 3px; margin: 0.9rem 0 0.4rem; font-size: 0.72rem; font-weight: 600; }
+.audit-bar span { padding: 0.45rem 0.5rem; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #07131a; }
+.audit-ok { background: #5de1d4; }
+.audit-fixed { background: #f2b94b; }
+.audit-missing { background: #f07f6e; }
+.audit-unknown { background: rgba(255, 255, 255, 0.35); }

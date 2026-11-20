@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import PortfolioHeader from '../../../components/portfolio-header';
 import FrequencyAtlasVisualizer from '../../../components/frequency-atlas-visualizer';
-import { INTERVENTIONS } from '../../../lib/frequency-atlas-data';
+import { INTERVENTIONS, SOURCE_AUDIT as A } from '../../../lib/frequency-atlas-data';
 
 const sources = INTERVENTIONS.flatMap((i) => i.citations);
 const verified = sources.filter((c) => c.status === 'verified').length;
@@ -73,16 +73,20 @@ export default function FrequencyAtlasPage() {
         <section className="detail-panel reveal reveal-delay-1">
           <h2 className="section-title" style={{ marginTop: 0 }}>Auditing my own sources</h2>
           <p className="hero-copy" style={{ maxWidth: 'none' }}>
-            The first draft of this atlas was written with an AI assistant. When I checked its references against
-            publishers and PubMed, most of the first eight had the wrong journal or a reworded title, and one paper
-            could not be found at all; the finding it supported contradicted a real trial. So the atlas now carries
-            its own audit: every source is marked verified or unverified, unfound sources and their findings are
-            removed, and the draft&apos;s study counts and effect sizes are no longer shown.
+            The first draft of this atlas was written with an AI assistant. I checked every one of its {A.checked} references
+            against the publisher, PubMed or the journal&apos;s own site. Only {A.correctAsWritten} were right as written.
           </p>
+          <div className="audit-bar" role="img" aria-label={`Of ${A.checked} citations: ${A.correctAsWritten} correct, ${A.realButWrongDetails} real but wrong details, ${A.notFound} not found, ${A.unconfirmed} unconfirmed`}>
+            <span className="audit-ok" style={{ flex: A.correctAsWritten }}>{A.correctAsWritten} correct</span>
+            <span className="audit-fixed" style={{ flex: A.realButWrongDetails }}>{A.realButWrongDetails} wrong journal, title or year</span>
+            <span className="audit-missing" style={{ flex: A.notFound }}>{A.notFound} not found</span>
+            <span className="audit-unknown" style={{ flex: Math.max(A.unconfirmed, 1) }}>{A.unconfirmed}</span>
+          </div>
           <ul className="detail-list">
-            <li><strong>{verified} of {sources.length}</strong> sources verified, each linked to its publisher or PubMed record.</li>
-            <li><strong>1</strong> source not found and removed, with the finding it backed.</li>
-            <li><strong>Lesson:</strong> AI-drafted references look right and are often wrong in the details. Check every one.</li>
+            <li><strong>Fixed:</strong> {A.realButWrongDetails} citations pointed at real papers with the wrong journal, title or year. One &quot;human mortality&quot; source was really a study in rats.</li>
+            <li><strong>Replaced or removed:</strong> {A.notFound} could not be found. {A.replacedWithRealSources} were replaced by real studies that support the same point; the rest were removed with the findings they backed, including one that a real trial contradicts.</li>
+            <li><strong>Also removed:</strong> the draft&apos;s study counts, participant numbers, effect sizes, safety ratings and clinical-outcome scores, none of which had a source.</li>
+            <li><strong>Now:</strong> {verified} of {sources.length} sources on this page are verified and linked, with each correction noted beside it. Next: match every finding to the sentence in the paper that supports it.</li>
           </ul>
         </section>
 
@@ -94,8 +98,8 @@ export default function FrequencyAtlasPage() {
           <FrequencyAtlasVisualizer />
           <p className="atlas-notice" role="note">
             <strong>Not medical advice.</strong> This is an information-design project. Evidence grades are the
-            author&apos;s own and not a formal clinical assessment. Findings come from the original draft and count as
-            checked only where their source is marked verified. Talk to a clinician before trying any intervention.
+            author&apos;s own and not a formal clinical assessment. Sources marked verified are real and correctly
+            cited; the findings themselves come from the original draft and have not each been checked against them. Talk to a clinician before trying any intervention.
           </p>
         </section>
       </main>
