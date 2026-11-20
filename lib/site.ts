@@ -4,6 +4,6 @@ export const SITE = {
   role: 'Software engineer',
   url: 'https://portfolio-iota-three-2cpi5mr7ku.vercel.app',
   github: 'https://github.com/Jeremy-Renger',
-  linkedin: '', // e.g. 'https://www.linkedin.com/in/<your-handle>'
-  email: '' // e.g. 'you@example.com'
+  linkedin: 'https://www.linkedin.com/in/jeremyrenger',
+  email: 'jrenger@wgu.edu'
 };
