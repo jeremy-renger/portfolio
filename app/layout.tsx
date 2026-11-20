@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: `${SITE.name} | Software Engineer`,
   description,
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     url: '/',
